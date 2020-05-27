@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div style="z-index: 10;" class="top-row px-4">
+        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+    </div>
+
+    <div class="content px-4 mb-5">
+        @Body
+    </div>
+    <div class="page-footer px-4">
+        © 2020 KOD by Mohammad™.
+    </div>
+</div>
