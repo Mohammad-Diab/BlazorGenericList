@@ -136,6 +136,34 @@ app {
     top: 0.5rem;
 }
 
+.spalsh-screen {
+    position: fixed;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+}
+
+.spalsh-screen img {
+    width: 80%;
+    max-width: 33vw;
+    height: auto;
+    align-self: center;
+    animation: spalsh 0.6s ease-out 0.05s forwards;
+    transform: scale(1.25);
+}
+
+@keyframes spalsh{
+    from {
+        transform: scale(1.25);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
