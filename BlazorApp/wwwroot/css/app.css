@@ -14,7 +14,7 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
-app {
+app, .main-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -154,13 +154,59 @@ app {
     height: auto;
     align-self: center;
     animation: spalsh 0.6s ease-out 0.05s forwards;
-    transform: scale(1.25);
+    transform: scale(1.2);
 }
 
 @keyframes spalsh{
     from {
-        transform: scale(1.25);
+        transform: scale(1.2);
     }
+    to {
+        transform: scale(1);
+    }
+}
+
+.spalsh-screen.out {
+    animation: hide 0.05s ease-out 0.23s forwards;
+}
+
+@keyframes hide {
+    from {
+        visibility: visible;
+    }
+
+    to {
+        visibility: hidden;
+    }
+}
+
+.spalsh-screen.out img {
+    animation: spalsh-out 0.2s ease-out 0.05s forwards;
+    transform: scale(1);
+}
+
+@keyframes spalsh-out {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+
+.main-container {
+    width: 100%;
+    animation: zoom 0.2s ease-out 0.25s forwards;
+    transform: scale(0.5);
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0.5);
+    }
+
     to {
         transform: scale(1);
     }
@@ -181,7 +227,7 @@ app {
 }
 
 @media (min-width: 768px) {
-    app {
+    app, .main-container {
         flex-direction: row;
     }
 
