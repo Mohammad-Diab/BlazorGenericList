@@ -1,0 +1,28 @@
+﻿<tr>
+    <td>@Item.Id</td>
+    <td>@Item.Username</td>
+    <td>@Item.FullName</td>
+    <td>@Item.Birthday.ToString("yyyy MMM dd")</td>
+    <td>@Item.Email</td>
+    <td>@Item.Phone</td>
+    <td>
+        @if (EditAbility)
+        {
+            <button class="btn btn-danger" @onclick="()=>DeleteUser.InvokeAsync(Item)">
+                <span class="oi oi-delete"></span>
+                <span>Delete</span>
+            </button>
+        }
+        else
+        {
+            <code>no_actions_avialable</code>
+        }
+
+    </td>
+</tr>
+
+@code {
+    [Parameter] public User Item { get; set; }
+    [Parameter] public bool EditAbility { get; set; }
+    [Parameter] public EventCallback<User> DeleteUser { get; set; }
+}
