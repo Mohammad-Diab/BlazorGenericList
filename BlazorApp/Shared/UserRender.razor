@@ -8,10 +8,15 @@
     <td>
         @if (EditAbility)
         {
+        <div class="btn-group">
+            <button class="btn btn-info" @onclick="()=>EditUser.InvokeAsync(Item)">
+                <span class="oi oi-pencil"></span>
+            </button>
+
             <button class="btn btn-danger" @onclick="()=>DeleteUser.InvokeAsync(Item)">
                 <span class="oi oi-delete"></span>
-                <span>Delete</span>
             </button>
+        </div>
         }
         else
         {
@@ -25,4 +30,5 @@
     [Parameter] public User Item { get; set; }
     [Parameter] public bool EditAbility { get; set; }
     [Parameter] public EventCallback<User> DeleteUser { get; set; }
+    [Parameter] public EventCallback<User> EditUser { get; set; }
 }
