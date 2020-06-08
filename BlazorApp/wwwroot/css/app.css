@@ -155,7 +155,7 @@ app, .main-container {
     max-width: 33%;
     height: auto;
     align-self: center;
-    animation: spalsh 0.6s cubic-bezier(0, 0, 0, 1) 0.05s forwards;
+    animation: spalsh 0.5s cubic-bezier(0, 0, 0, 1) 0.1s forwards;
     transform: scale(1.3);
 }
 
