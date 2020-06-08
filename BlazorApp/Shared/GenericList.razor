@@ -1,5 +1,5 @@
 ﻿@typeparam T
-@if (HaveEditPrivialge)
+@if (EditAbility)
 {
     <div class="mt-1 mb-3">
         <button class="btn btn-primary" @onclick="AddItem">
@@ -38,7 +38,7 @@ else
 @code {
     [Parameter] public string Title { get; set; }
     [Parameter] public List<T> ItemsList { get; set; }
-    [Parameter] public bool HaveEditPrivialge { get; set; }
+    [Parameter] public bool EditAbility { get; set; }
     [Parameter] public EventCallback AddItem { get; set; }
     [Parameter] public RenderFragment TableHeader { get; set; }
     [Parameter] public RenderFragment<T> ItemRender { get; set; }
