@@ -1,0 +1,46 @@
+﻿@typeparam T
+@if (HaveEditPrivialge)
+{
+    <div class="mt-1 mb-3">
+        <button class="btn btn-primary" @onclick="AddItem">
+            <span class="oi oi-plus"></span>
+            <span>Add</span>
+        </button>
+    </div>
+}
+
+
+@if (ItemsList == null)
+{
+    <text>Loading...</text>
+}
+else if (ItemsList.Count == 0)
+{
+    <text>No item to show.</text>
+}
+else
+{
+    <table style="table-layout: fixed" class="table">
+        <thead>
+            @TableHeader
+        </thead>
+        <tbody>
+            @for (int i = 0; i < ItemsList.Count; i++)
+            {
+                int index = i;
+                @ItemRender(ItemsList[i]);
+            }
+        </tbody>
+    </table>
+}
+<h3>@Title</h3>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public List<T> ItemsList { get; set; }
+    [Parameter] public bool HaveEditPrivialge { get; set; }
+    [Parameter] public EventCallback AddItem { get; set; }
+    [Parameter] public RenderFragment TableHeader { get; set; }
+    [Parameter] public RenderFragment<T> ItemRender { get; set; }
+
+}
