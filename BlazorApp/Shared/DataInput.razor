@@ -1,0 +1,11 @@
+﻿<label for="Di_@Id">@Item.Label</label>
+<input type="@Item.Type.ToString().ToLower()" class="form-control @(!string.IsNullOrEmpty(Item.ErrorMessage) ? "is-invalid" : "")" id="Di_@Id" value="@Item.DefaultValue">
+<div class="valid-tooltip ">
+    @Item.ErrorMessage
+</div>
+
+@code {
+    [Parameter] public Property Item { get; set; }
+
+    string Id = Guid.NewGuid().ToString("N");
+}
