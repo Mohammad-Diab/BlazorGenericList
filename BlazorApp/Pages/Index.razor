@@ -2,7 +2,7 @@
 
 <h1>Hello, Blazor 🙂.</h1>
 <hr class="my-3"/>
-<GenericList ItemsList="ItemList" EditAbility="EditAbility">
+<GenericList ItemsList="ItemList" EditAbility="EditAbility" ItemProperties="Properties">
     <TableHeader>
         <HeaderRender Headers="ListHeaders"></HeaderRender>
     </TableHeader>
@@ -17,8 +17,15 @@
 
     List<string> ListHeaders = new List<string>() { "Id", "Username", "Full Name", "Birthday", "Email", "Phone" };
 
+    List<Property> Properties = new List<Property>();
+
     protected override async Task OnInitializedAsync()
     {
+        Properties.Add(new Property("Username", PropertyType.Text, "Username"));
+        Properties.Add(new Property("FullName", PropertyType.Text, "Full Name"));
+        Properties.Add(new Property("Email", PropertyType.Email, "Email"));
+        Properties.Add(new Property("Phone", PropertyType.Phone, "Phone"));
+        Properties.Add(new Property("Birthday", PropertyType.Date, "Birthday"));
         await Task.Delay(2000);
         ItemList = new List<User>();
         ItemList.Add(new User() { Username = "samer", FullName = "Samer Ali", Email = "SamerAli@mail.com", Phone = "(502) 837-8387", Birthday = new DateTime(1960, 1, 15) });

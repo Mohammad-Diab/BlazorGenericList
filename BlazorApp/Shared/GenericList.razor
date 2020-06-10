@@ -7,8 +7,8 @@
             <span>Add</span>
         </button>
     </div>
+    <UpdateModal @ref="Modal" ItemType="ItemType" Properties="ItemProperties"></UpdateModal>
 }
-
 
 @if (ItemsList == null)
 {
@@ -39,8 +39,18 @@ else
     [Parameter] public string Title { get; set; }
     [Parameter] public List<T> ItemsList { get; set; }
     [Parameter] public bool EditAbility { get; set; }
-    [Parameter] public EventCallback AddItem { get; set; }
+    [Parameter] public List<Property> ItemProperties { get; set; }
+    //[Parameter] public EventCallback AddItem { get; set; }
     [Parameter] public RenderFragment TableHeader { get; set; }
     [Parameter] public RenderFragment<T> ItemRender { get; set; }
+
+    T ItemType = default(T);
+
+    UpdateModal<T> Modal;
+
+    void AddItem()
+    {
+        Modal.ShowModal("Add new item", DialogMode.Add);
+    }
 
 }
