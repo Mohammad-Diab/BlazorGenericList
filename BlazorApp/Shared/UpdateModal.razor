@@ -33,7 +33,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
-                <button type="button" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-primary">@(DialogMode == DialogMode.Add?"Add":"Edit")</button>
             </div>
         </div>
     </div>
@@ -64,7 +64,15 @@
                 Properties[i].DefaultValue = (value is DateTime) ? ((DateTime)prop.GetValue(Item)).ToString("yyyy-MM-dd") : prop.GetValue(Item).ToString();
             }
         }
+        else
+        {
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                Properties[i].DefaultValue = "";
+            }
+        }
         IsShown = true;
+        StateHasChanged();
     }
 
     public async Task CloseModal()

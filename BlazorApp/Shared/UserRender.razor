@@ -9,7 +9,7 @@
         @if (EditAbility)
         {
         <div class="btn-group">
-            <button class="btn btn-info" @onclick="()=>EditUser.InvokeAsync(Item)">
+            <button class="btn btn-info" @onclick="ShowEditModal">
                 <span class="oi oi-pencil"></span>
             </button>
 
@@ -31,4 +31,10 @@
     [Parameter] public bool EditAbility { get; set; }
     [Parameter] public EventCallback<User> DeleteUser { get; set; }
     [Parameter] public EventCallback<User> EditUser { get; set; }
+    [CascadingParameter] public UpdateModal<User> EditModal { get; set; }
+
+    void ShowEditModal()
+    {
+        EditModal.ShowModal($"Edit '{Item.Username}'", DialogMode.Edit, Item);
+    }
 }
