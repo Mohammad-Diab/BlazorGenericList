@@ -169,10 +169,10 @@ app, .main-container {
 }
 
 .spalsh-screen.out {
-    animation: hide 0.05s ease-out 0.24s forwards;
+    animation: splash-slide-right 0.05s ease-out 0.24s forwards;
 }
 
-@keyframes hide {
+@keyframes splash-slide-right {
     from {
         transform: translateX(0);
         visibility: visible;
@@ -203,11 +203,11 @@ app, .main-container {
 
 .main-container {
     width: 100%;
-    animation: zoom 0.25s ease-out 0.3s forwards;
+    animation: main-slide-right 0.25s ease-out 0.3s forwards;
     transform: translateX(-100vw);
 }
 
-@keyframes zoom {
+@keyframes main-slide-right {
     from {
         transform: translateX(-100vw);
     }
