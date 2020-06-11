@@ -19,19 +19,23 @@ else if (ItemsList.Count == 0)
     <text>No item to show.</text>
 }
 else
-{
+{<CascadingValue Value="@Modal">
     <table style="table-layout: fixed" class="table">
         <thead>
             @TableHeader
         </thead>
+
         <tbody>
             @for (int i = 0; i < ItemsList.Count; i++)
             {
                 int index = i;
+
                 @ItemRender(ItemsList[i]);
             }
         </tbody>
+        
     </table>
+    </CascadingValue>
 }
 <h3>@Title</h3>
 
