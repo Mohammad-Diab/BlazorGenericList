@@ -48,7 +48,7 @@
     T Item { get; set; }
 
     bool IsShown = false;
-    string animateClassName = "animate__bounceIn animate__fast";
+    string animateClassName = "animate__bounceInDown animate__fast";
 
     public void ShowModal(string ModalTitle, DialogMode Mode, T Item = default(T))
     {
@@ -80,6 +80,6 @@
         animateClassName = "animate__bounceOut animate__faster";
         await Task.Delay(400);
         IsShown = false;
-        animateClassName = "animate__bounceIn animate__fast";
+        animateClassName = "animate__bounceInDown animate__fast";
     }
 }
