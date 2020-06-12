@@ -1,9 +1,9 @@
 ﻿@typeparam T
 
-<div class="modal-backdrop @(IsShown ? "show" : "d-none")"></div>
 <div class="modal @(IsShown ? "show d-block" : "")" tabindex="-1" role="dialog">
+<div style="z-index: unset;" class="modal-backdrop @(IsShown ? "show" : "d-none")" @onclick="FocusModal"></div>
     <div class="modal-dialog modal-lg @animateClassName animate__animated" role="document">
-        <div class="modal-content">
+        <div class="modal-content animate__animated animate__fast @FocusClassName">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">@ModalTitle</h5>
                 <button type="button" class="close" @onclick="CloseModal" aria-label="Close">
@@ -50,6 +50,9 @@
     bool IsShown = false;
     string animateClassName = "animate__bounceInDown animate__fast";
 
+    bool IsAnimating = false;
+    string FocusClassName = "";
+
     public void ShowModal(string ModalTitle, DialogMode Mode, T Item = default(T))
     {
         this.ModalTitle = ModalTitle;
@@ -81,5 +84,16 @@
         await Task.Delay(400);
         IsShown = false;
         animateClassName = "animate__bounceInDown animate__fast";
+    }
+
+    public async Task FocusModal()
+    {
+        if (IsAnimating)
+            return;
+        IsAnimating = true;
+        FocusClassName = "animate__tada";
+        await Task.Delay(600);
+        FocusClassName = "";
+        IsAnimating = false;
     }
 }
