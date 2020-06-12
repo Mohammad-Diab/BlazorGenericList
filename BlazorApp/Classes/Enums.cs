@@ -19,4 +19,17 @@ namespace BlazorApp
         Phone = 3,
         Date = 4
     }
+
+    public enum ConfirmType
+    {
+        Default = 0,
+        Delete = 1
+    }
+
+    public enum DialogResult
+    {
+        Undefiend = 0,
+        Ok = 1,
+        Cancel = 2
+    }
 }

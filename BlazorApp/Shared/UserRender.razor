@@ -13,7 +13,7 @@
                 <span class="oi oi-pencil"></span>
             </button>
 
-            <button class="btn btn-danger" @onclick="()=>DeleteUser.InvokeAsync(Item)">
+            <button class="btn btn-danger" @onclick="DeleteItem">
                 <span class="oi oi-delete"></span>
             </button>
         </div>
@@ -31,10 +31,18 @@
     [Parameter] public bool EditAbility { get; set; }
     [Parameter] public EventCallback<User> DeleteUser { get; set; }
     [Parameter] public EventCallback<User> EditUser { get; set; }
-    [CascadingParameter] public UpdateModal<User> EditModal { get; set; }
+    [CascadingParameter(Name = "UpdateModal")] public UpdateModal<User> EditModal { get; set; }
+    [CascadingParameter(Name = "ConfirmDialog")] public ConfirmDialog ConfirmModal { get; set; }
+
 
     void ShowEditModal()
     {
         EditModal.ShowModal($"Edit '{Item.Username}'", DialogMode.Edit, Item);
+    }
+    
+    async Task DeleteItem()
+    {
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {Item.Username}", $"Do you really want to delete '{Item.Username}'", ConfirmType.Delete);
+        Console.WriteLine(result.ToString());
     }
 }
