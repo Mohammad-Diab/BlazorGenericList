@@ -8,6 +8,7 @@
         </button>
     </div>
     <UpdateModal @ref="Modal" ItemType="ItemType" Properties="ItemProperties"></UpdateModal>
+    <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
 
 @if (ItemsList == null)
@@ -19,22 +20,24 @@ else if (ItemsList.Count == 0)
     <text>No item to show.</text>
 }
 else
-{<CascadingValue Value="@Modal">
-    <table style="table-layout: fixed" class="table">
-        <thead>
-            @TableHeader
-        </thead>
+{
+    <CascadingValue Value="@Modal" Name="UpdateModal">
+        <CascadingValue Value="@ConfirmModal" Name="ConfirmDialog">
+            <table style="table-layout: fixed" class="table">
+                <thead>
+                    @TableHeader
+                </thead>
 
-        <tbody>
-            @for (int i = 0; i < ItemsList.Count; i++)
-            {
-                int index = i;
+                <tbody>
+                    @for (int i = 0; i < ItemsList.Count; i++)
+                    {
+                        int index = i;
 
-                @ItemRender(ItemsList[i]);
-            }
-        </tbody>
-        
-    </table>
+                        @ItemRender(ItemsList[i]);
+                    }
+                </tbody>
+            </table>
+        </CascadingValue>
     </CascadingValue>
 }
 <h3>@Title</h3>
@@ -51,6 +54,7 @@ else
     T ItemType = default(T);
 
     UpdateModal<T> Modal;
+    ConfirmDialog ConfirmModal;
 
     void AddItem()
     {
