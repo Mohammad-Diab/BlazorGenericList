@@ -9,11 +9,11 @@
         @if (EditAbility)
         {
         <div class="btn-group">
-            <button class="btn btn-info" @onclick="ShowEditModal">
+            <button class="btn btn-info" @onclick="() => Parent.EditItem(Item, Item.Id.ToString(), Item.FullName)">
                 <span class="oi oi-pencil"></span>
             </button>
 
-            <button class="btn btn-danger" @onclick="DeleteItem">
+            <button class="btn btn-danger" @onclick="() => Parent.DeleteItem(Item, Item.FullName)">
                 <span class="oi oi-delete"></span>
             </button>
         </div>
@@ -29,20 +29,23 @@
 @code {
     [Parameter] public User Item { get; set; }
     [Parameter] public bool EditAbility { get; set; }
-    [Parameter] public EventCallback<User> DeleteUser { get; set; }
-    [Parameter] public EventCallback<User> EditUser { get; set; }
-    [CascadingParameter(Name = "UpdateModal")] public UpdateModal<User> EditModal { get; set; }
-    [CascadingParameter(Name = "ConfirmDialog")] public ConfirmDialog ConfirmModal { get; set; }
+    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+
+    //[Parameter] public EventCallback<User> DeleteUser { get; set; }
+    //[Parameter] public Action<User, string, string> EditUser { get; set; }
+
+    //[CascadingParameter(Name = "UpdateModal")] public UpdateModal<User> EditModal { get; set; }
+    //[CascadingParameter(Name = "ConfirmDialog")] public ConfirmDialog ConfirmModal { get; set; }
 
 
-    void ShowEditModal()
-    {
-        EditModal.ShowModal($"Edit '{Item.Username}'", DialogMode.Edit, Item);
-    }
-    
-    async Task DeleteItem()
-    {
-        DialogResult result = await ConfirmModal.ShowModal($"Deleting {Item.Username}", $"Do you really want to delete '{Item.Username}'", ConfirmType.Delete);
-        Console.WriteLine(result.ToString());
-    }
+    //async void ShowEditModal()
+    //{
+    //    await EditModal.ShowModal($"Edit '{Item.Username}'", DialogMode.Edit, Item.Id.ToString(), Item);
+    //}
+
+    //async Task DeleteItem()
+    //{
+    //    DialogResult result = await ConfirmModal.ShowModal($"Deleting {Item.FullName}", $"Do you really want to delete '{Item.FullName}'", ConfirmType.Delete);
+    //    Console.WriteLine(result.ToString());
+    //}
 }
