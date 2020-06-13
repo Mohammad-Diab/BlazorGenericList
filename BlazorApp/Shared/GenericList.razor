@@ -7,7 +7,7 @@
             <span>Add</span>
         </button>
     </div>
-    <UpdateModal @ref="Modal" ItemType="ItemType" Properties="ItemProperties"></UpdateModal>
+    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemProperties"></UpdateModal>
     <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
 
@@ -21,44 +21,74 @@ else if (ItemsList.Count == 0)
 }
 else
 {
-    <CascadingValue Value="@Modal" Name="UpdateModal">
-        <CascadingValue Value="@ConfirmModal" Name="ConfirmDialog">
-            <table style="table-layout: fixed" class="table">
-                <thead>
-                    @TableHeader
-                </thead>
+    <CascadingValue Value="@this" Name="UpdateModal">
+        <table style="table-layout: fixed" class="table">
+            <thead>
+                @TableHeader
+            </thead>
 
-                <tbody>
-                    @for (int i = 0; i < ItemsList.Count; i++)
-                    {
-                        int index = i;
+            <tbody>
+                @for (int i = 0; i < ItemsList.Count; i++)
+                {
+                    int index = i;
 
-                        @ItemRender(ItemsList[i]);
-                    }
-                </tbody>
-            </table>
-        </CascadingValue>
+                    @ItemRender(ItemsList[i]);
+                }
+            </tbody>
+        </table>
     </CascadingValue>
 }
 <h3>@Title</h3>
 
 @code {
+    [Parameter] public bool EditAbility { get; set; }
+
+    [Parameter] public string ItemType { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public List<T> ItemsList { get; set; }
-    [Parameter] public bool EditAbility { get; set; }
     [Parameter] public List<Property> ItemProperties { get; set; }
-    //[Parameter] public EventCallback AddItem { get; set; }
+
     [Parameter] public RenderFragment TableHeader { get; set; }
     [Parameter] public RenderFragment<T> ItemRender { get; set; }
 
-    T ItemType = default(T);
+    T ItemSample = default(T);
 
     UpdateModal<T> Modal;
     ConfirmDialog ConfirmModal;
 
-    void AddItem()
+    async void AddItem()
     {
-        Modal.ShowModal("Add new item", DialogMode.Add);
+        T newItem = await Modal.ShowModal($"Add new {ItemType?.ToLower() ?? "item"}", DialogMode.Add);
+        ItemsList.Add(newItem);
+        StateHasChanged();
+    }
+
+    public async void EditItem(T Item, string ItemId, string itemName)
+    {
+        T newItem = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
+        if (newItem != null)
+        {
+            for (int i = 0; i < ItemProperties.Count; i++)
+            {
+                var newProp = typeof(T).GetProperty(ItemProperties[i].Key);
+                var newValue = newProp.GetValue(newItem);
+
+                var destinationProp = typeof(T).GetProperty(ItemProperties[i].Key);
+                destinationProp.SetValue(Item, newValue);
+            }
+            StateHasChanged();
+        }
+    }
+
+    public async void DeleteItem(T Item, string itemName)
+    {
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {itemName}", $"Do you really want to delete '{itemName}'?", ConfirmType.Delete);
+        if (result == DialogResult.Ok)
+        {
+            Console.WriteLine("Ok");
+            ItemsList.Remove(Item);
+            StateHasChanged();
+        }
     }
 
 }

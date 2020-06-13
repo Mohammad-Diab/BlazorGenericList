@@ -26,5 +26,36 @@ namespace BlazorApp
             currentId++;
             Id = currentId;
         }
+
+        public User(string username, string fullName, string birthday, string email, string phone)
+        {
+            currentId++;
+            Id = currentId;
+            Username = username;
+            FullName = fullName;
+            DateTime date;
+            DateTime.TryParse(birthday, out date);
+            Birthday = date;
+            Phone = phone;
+            Email = email;
+        }
+
+        public User(string id, string username, string fullName, string birthday, string email, string phone)
+        {
+            int IntId;
+            if(int.TryParse(id,out IntId))
+            {
+                currentId++;
+                IntId = currentId;
+            }
+            Id = IntId;
+            Username = username;
+            FullName = fullName;
+            DateTime date;
+            DateTime.TryParse(birthday, out date);
+            Birthday = date;
+            Phone = phone;
+            Email = email;
+        }
     }
 }

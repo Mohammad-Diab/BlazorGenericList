@@ -46,6 +46,9 @@
     [Parameter] public T ItemType { get; set; }
     string ModalTitle { get; set; }
     DialogMode DialogMode { get; set; }
+
+    DialogResult Result = DialogResult.Undefiend;
+
     T Item { get; set; }
 
     bool IsShown = false;
@@ -55,7 +58,7 @@
     bool IsAnimating = false;
     string FocusClassName = "";
 
-    public void ShowModal(string ModalTitle, DialogMode Mode, T Item = default(T))
+    public async Task<T> ShowModal(string ModalTitle, DialogMode Mode, string ItemId = null, T Item = default(T))
     {
         this.ModalTitle = ModalTitle;
         DialogMode = Mode;
@@ -77,8 +80,40 @@
             }
         }
         ConfirmButtonText = (Mode == DialogMode.Add ? "Add" : "Edit");
+        Result = DialogResult.Undefiend;
         IsShown = true;
         StateHasChanged();
+
+        while (Result == DialogResult.Undefiend)
+        {
+            await Task.Delay(50);
+        }
+
+        if(Result == DialogResult.Ok)
+        {
+            var param = new List<object>();
+            if (Mode == DialogMode.Edit)
+                param.Add(ItemId);
+
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                param.Add(Properties[i].DefaultValue);
+            }
+
+            //var param = (IdList.Union(from prop in Properties select prop.DefaultValue)).ToArray<object>();
+
+            for (int i = 0; i < param.Count; i++)
+            {
+                Console.WriteLine($"{i} = {param[i]}");
+            }
+
+            T result = (T)Activator.CreateInstance(typeof(T), param.ToArray());
+
+            return result;
+        }
+
+        return default(T);
+
     }
 
     async Task CloseModal()
@@ -91,16 +126,18 @@
 
     async Task Cancel()
     {
+        Result = DialogResult.Cancel;
         await CloseModal();
     }
 
     async Task Confirm()
     {
+        Result = DialogResult.Ok;
         await CloseModal();
-        for (int i = 0; i < Properties.Count; i++)
-        {
-            Console.WriteLine($"{Properties[i].Key} = {Properties[i].DefaultValue}");
-        }
+        //for (int i = 0; i < Properties.Count; i++)
+        //{
+        //    Console.WriteLine($"{Properties[i].Key} = {Properties[i].DefaultValue}");
+        //}
     }
 
     public async Task FocusModal()
