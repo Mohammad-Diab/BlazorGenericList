@@ -59,8 +59,11 @@ else
     async void AddItem()
     {
         T newItem = await Modal.ShowModal($"Add new {ItemType?.ToLower() ?? "item"}", DialogMode.Add);
-        ItemsList.Add(newItem);
-        StateHasChanged();
+        if(newItem != null)
+        {
+            ItemsList.Add(newItem);
+            StateHasChanged();
+        }
     }
 
     public async void EditItem(T Item, string ItemId, string itemName)
