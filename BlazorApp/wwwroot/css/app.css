@@ -159,6 +159,11 @@ app, .main-container {
     transform: scale(1.3);
 }
 
+.lonely-text {
+    font-size: 3.33vh;
+    letter-spacing: 0.4vh;
+}
+
 @keyframes spalsh{
     from {
         transform: scale(1.3);
@@ -274,5 +279,12 @@ app, .main-container {
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+    }
+}
+
+@media (min-height: 1080px) {
+    .lonely-text {
+        font-size: 36px;
+        letter-spacing: 4px;
     }
 }
