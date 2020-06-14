@@ -13,7 +13,7 @@
 
 @if (ItemsList == null)
 {
-    <text>Loading...</text>
+   <Loading ColumnsCount="7" Type="LoadingContentType.Grid" />
 }
 else if (ItemsList.Count == 0)
 {
@@ -22,7 +22,7 @@ else if (ItemsList.Count == 0)
 else
 {
     <CascadingValue Value="@this" Name="UpdateModal">
-        <table style="table-layout: fixed" class="table">
+        <table style="table-layout: fixed" class="table mt-4">
             <thead>
                 @TableHeader
             </thead>

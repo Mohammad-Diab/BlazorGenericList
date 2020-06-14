@@ -32,4 +32,9 @@ namespace BlazorApp
         Ok = 1,
         Cancel = 2
     }
+
+    public enum LoadingContentType
+    {
+        Grid = 1,
+    }
 }
