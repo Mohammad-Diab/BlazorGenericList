@@ -2,8 +2,15 @@
     @for (int i = 0; i < Headers.Count; i++)
     {
         int index = i + 1;
-        <th>
-            <a class="btn-link pl-1">@Headers[i]</a>
+
+        <th style="cursor: pointer;" @onclick="() => { Parent.Sort(index); }">
+            <div class="btn-link pl-1">
+                @if (Math.Abs(Parent.ItemsList.SortedBy) == index)
+                {
+                    <span class="oi align-middle oi-sort-@(Parent.ItemsList.SortedBy > -1 ? "ascending" : "descending")"></span>
+                }
+                @Headers[i]
+            </div>
         </th>
     }
     <th>
@@ -13,5 +20,6 @@
 
 @code {
     [Parameter] public List<string> Headers { get; set; }
+    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
 }

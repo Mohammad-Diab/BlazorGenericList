@@ -1,0 +1,91 @@
+﻿@if (PagesCount < 1)
+{
+
+}
+else
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(CurrentPage < 2 ? "disabled" : "")">
+                <a class="page-link" href="#" tabindex="-1" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">Previous</a>
+            </li>
+            <li class="page-item @(CurrentPage == 1 ? "active" : "")">
+                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(1); }">1</a>
+            </li>
+
+            @if (PagesCount < 10)
+            {
+                @for (int i = 0; i < CurrentPage - 1; i++)
+                {
+                    int index = i;
+                    <li class="page-item @(CurrentPage == i ? "active" : "")">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(index); }">@i</a>
+                    </li>
+                }
+            }
+            else
+            {
+                @if (CurrentPage > 3)
+                {
+                    <li style="padding: 0 12px 0 14px; letter-spacing: 4px; font-weight: bolder;">...</li>
+                }
+
+                if (CurrentPage == PagesCount)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage - 2); }">@(CurrentPage - 2)</a>
+                    </li>
+                }
+
+                if (CurrentPage > 2)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">@(CurrentPage - 1)</a>
+                    </li>
+                }
+
+                if (CurrentPage != 1 && CurrentPage != PagesCount)
+                {
+                    <li class="page-item active">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage); }">@CurrentPage</a>
+                    </li>
+                }
+
+
+                if (CurrentPage < PagesCount - 1)
+                {
+                    <li class="page-item ">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">@(CurrentPage + 1)</a>
+                    </li>
+                }
+
+                if (CurrentPage == 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 2); }">@(CurrentPage + 2)</a>
+                    </li>
+                }
+
+                @if (CurrentPage < PagesCount - 2)
+                {
+                    <li style="padding: 0 12px 0 14px; letter-spacing: 4px; font-weight: bolder;">...</li>
+                }
+
+            }
+
+            <li class="page-item @(CurrentPage == PagesCount ? "active" : "")">
+                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(PagesCount); }">@PagesCount</a>
+            </li>
+            <li class="page-item @(CurrentPage >= PagesCount ? "disabled" : "")">
+                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+
+
+@code {
+    [Parameter] public int PagesCount { get; set; }
+    [Parameter] public int CurrentPage { get; set; }
+    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+}

@@ -28,7 +28,7 @@
 
 @code {
     [Parameter] public User Item { get; set; }
-    [Parameter] public bool EditAbility { get; set; }
+    [CascadingParameter(Name = "EditAbility")] public bool EditAbility { get; set; }
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
     //[Parameter] public EventCallback<User> DeleteUser { get; set; }
