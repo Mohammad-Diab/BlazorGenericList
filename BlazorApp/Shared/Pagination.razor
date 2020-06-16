@@ -15,7 +15,7 @@ else
 
             @if (PagesCount < 10)
             {
-                @for (int i = 0; i < CurrentPage - 1; i++)
+                @for (int i = 2; i < PagesCount; i++)
                 {
                     int index = i;
                     <li class="page-item @(CurrentPage == i ? "active" : "")">
