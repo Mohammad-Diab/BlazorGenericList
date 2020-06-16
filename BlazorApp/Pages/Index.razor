@@ -2,37 +2,34 @@
 
 <h1>Hello, Blazor 🙂.</h1>
 <hr class="my-3"/>
-<GenericList ItemType="@ItemType" ItemsList="ItemList" EditAbility="EditAbility" ItemProperties="Properties">
-    <TableHeader>
-        <HeaderRender Headers="ListHeaders"></HeaderRender>
-    </TableHeader>
-    <ItemRender>
-        <UserRender Item="context" EditAbility="EditAbility" />
-    </ItemRender>
-</GenericList>
+<CascadingValue Name="EditAbility" Value="EditAbility">
+    <CascadingValue Name="ItemsPerPage" Value="ItemsPerPage">
+        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ActionFunc="Action">
+            <TableHeader>
+                <HeaderRender Headers="ItemList?.Header" />
+            </TableHeader>
+            <ItemRender>
+                <UserRender Item="context" />
+            </ItemRender>
+        </GenericList>
+    </CascadingValue>
+</CascadingValue>
 
-@code{
-    List<User> ItemList;
-    bool EditAbility = true;
-    string ItemType = "User";
+    @code{
+        GridList<User> ItemList;
+        bool EditAbility = true;
+        int ItemsPerPage = 3;
 
-    List<string> ListHeaders = new List<string>() { "Id", "Username", "Full Name", "Birthday", "Email", "Phone" };
+        protected override async Task OnInitializedAsync()
+        {
+            ItemList = await Controller.GetUsers(1, ItemsPerPage, User.DefaultSortedBy);
+        }
 
-    List<Property> Properties = new List<Property>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        Properties.Add(new Property("Username", PropertyType.Text, "Username"));
-        Properties.Add(new Property("FullName", PropertyType.Text, "Full Name"));
-        Properties.Add(new Property("Birthday", PropertyType.Date, "Birthday"));
-        Properties.Add(new Property("Email", PropertyType.Email, "Email"));
-        Properties.Add(new Property("Phone", PropertyType.Phone, "Phone"));
-        await Task.Delay(2000);
-        ItemList = new List<User>();
-        ItemList.Add(new User() { Username = "samer", FullName = "Samer Ali", Email = "SamerAli@mail.com", Phone = "(502) 837-8387", Birthday = new DateTime(1960, 1, 15) });
-        ItemList.Add(new User() { Username = "ahmad", FullName = "Ahmad Kareem", Email = "A.Kareem@mail.com", Phone = "(650) 627-0862", Birthday = new DateTime(2000, 5, 20) });
-        ItemList.Add(new User() { Username = "fadi", FullName = "Fadi Zaki", Email = "FadiZaki@mail.com", Phone = "(209) 822-9795", Birthday = new DateTime(1995, 12, 1) });
-        ItemList.Add(new User() { Username = "mohammad", FullName = "Mohammad Hassan", Email = "M.Hassan@mail.com", Phone = "(818) 690-5381", Birthday = new DateTime(1975, 6, 8) });
-        ItemList.Add(new User() { Username = "shadi", FullName = "Shadi Nizzar", Email = "ShadiNezzar@mail.com", Phone = "(507) 288-0307", Birthday = new DateTime(1992, 1, 1) });
+        async Task Action(int PageNumber, int SortBy, string FilterString = "")
+        {
+            ItemList = null;
+            StateHasChanged();
+            ItemList = await Controller.GetUsers(PageNumber, ItemsPerPage, SortBy, FilterString);
+            StateHasChanged();
+        }
     }
-}

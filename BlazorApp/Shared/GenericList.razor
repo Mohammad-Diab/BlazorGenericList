@@ -7,49 +7,58 @@
             <span>Add</span>
         </button>
     </div>
-    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemProperties"></UpdateModal>
+    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
     <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
 
 @if (ItemsList == null)
 {
-   <Loading ColumnsCount="7" Type="LoadingContentType.Grid" />
+   <Loading ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
 }
-else if (ItemsList.Count == 0)
+else if (ItemsList.TotalCount == 0)
 {
     <EmptyList />
 }
 else
 {
-    <CascadingValue Value="@this" Name="UpdateModal">
-        <table style="table-layout: fixed" class="table mt-4">
-            <thead>
-                @TableHeader
-            </thead>
+<CascadingValue Value="@this" Name="UpdateModal">
+    <table style="table-layout: fixed" class="table mt-4">
+        <thead>
+            @TableHeader
+        </thead>
 
-            <tbody>
-                @for (int i = 0; i < ItemsList.Count; i++)
-                {
-                    int index = i;
+        <tbody>
+            @for (int i = 0; i < ItemsList.Count; i++)
+            {
+                int index = i;
 
-                    @ItemRender(ItemsList[i]);
-                }
-            </tbody>
-        </table>
-    </CascadingValue>
+                @ItemRender(ItemsList[i]);
+            }
+        </tbody>
+    </table>
+
+    <Pagination CurrentPage="ItemsList.CurrentPage" PagesCount="ItemsList.PagesCount" />
+</CascadingValue>
 }
 <h3>@Title</h3>
 
 @code {
-    [Parameter] public bool EditAbility { get; set; }
 
-    [Parameter] public string ItemType { get; set; }
+
     [Parameter] public string Title { get; set; }
-    [Parameter] public List<T> ItemsList { get; set; }
-    [Parameter] public List<Property> ItemProperties { get; set; }
+    [Parameter] public int GridColumnsCount { get; set; }
+
+    [Parameter] public GridList<T> ItemsList { get; set; }
 
     [Parameter] public RenderFragment TableHeader { get; set; }
     [Parameter] public RenderFragment<T> ItemRender { get; set; }
+
+    [CascadingParameter(Name = "ItemsPerPage")] public int ItemsPerPage { get; set; }
+    [CascadingParameter(Name = "EditAbility")] public bool EditAbility { get; set; }
+
+    [Parameter] public Func<int, int, string, Task> ActionFunc{ get; set; }
+
+    string filterString = "";
 
     T ItemSample = default(T);
 
@@ -58,7 +67,7 @@ else
 
     async void AddItem()
     {
-        T newItem = await Modal.ShowModal($"Add new {ItemType?.ToLower() ?? "item"}", DialogMode.Add);
+        T newItem = await Modal.ShowModal($"Add new {ItemsList?.ItemsType?.ToLower() ?? "item"}", DialogMode.Add);
         if(newItem != null)
         {
             ItemsList.Add(newItem);
@@ -71,12 +80,12 @@ else
         T newItem = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
         if (newItem != null)
         {
-            for (int i = 0; i < ItemProperties.Count; i++)
+            for (int i = 0; i < (ItemsList?.ItemProperties.Count ?? 0); i++)
             {
-                var newProp = typeof(T).GetProperty(ItemProperties[i].Key);
+                var newProp = typeof(T).GetProperty(ItemsList.ItemProperties[i].Key);
                 var newValue = newProp.GetValue(newItem);
 
-                var destinationProp = typeof(T).GetProperty(ItemProperties[i].Key);
+                var destinationProp = typeof(T).GetProperty(ItemsList.ItemProperties[i].Key);
                 destinationProp.SetValue(Item, newValue);
             }
             StateHasChanged();
@@ -92,6 +101,22 @@ else
             ItemsList.Remove(Item);
             StateHasChanged();
         }
+    }
+
+    public async void Sort(int SortBy)
+    {
+        if(SortBy == Math.Abs(ItemsList.SortedBy))
+        {
+            SortBy = -ItemsList.SortedBy;
+        }
+        await ActionFunc(ItemsList.CurrentPage, SortBy, filterString);
+    }
+
+    public async void GoToPage(int PageNumber)
+    {
+        PageNumber = PageNumber < 1 ? 1 : PageNumber;
+        PageNumber = PageNumber > ItemsList.PagesCount ? ItemsList.PagesCount : PageNumber;
+        await ActionFunc(PageNumber, ItemsList.SortedBy, filterString);
     }
 
 }

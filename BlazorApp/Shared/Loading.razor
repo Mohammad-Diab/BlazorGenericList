@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < 4; i++)
+            @for (int i = 0; i < ItemsPerPage; i++)
             {
                 <tr>
                     @for (int j = 0; j < ColumnsCount; j++)
@@ -34,4 +34,5 @@
 @code {
     [Parameter] public LoadingContentType Type { get; set; }
     [Parameter] public int ColumnsCount { get; set; }
+    [CascadingParameter(Name = "ItemsPerPage")] public int ItemsPerPage { get; set; }
 }
