@@ -1,0 +1,56 @@
+﻿@using System.Timers;
+
+<div class="input-group">
+    <input class="form-control my-0 py-1" type="text" placeholder="Search" @bind-value="FilterString" aria-label="Search" @oninput="(arg) => { FilterString = (string)arg.Value; TextChanged(); }">
+    <div class="input-group-prepend">
+        <span class="input-group-text">
+            <i class="oi oi-magnifying-glass" aria-hidden="true"></i>
+        </span>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+
+    string FilterString = "";
+    string lastFilterString = "";
+    int counter = 10;
+    Timer timer;
+
+    protected override void OnInitialized()
+    {
+        timer = new Timer();
+        timer.Interval = 300;
+        timer.AutoReset = false;
+        timer.Elapsed += TimerElapsed;
+    }
+
+    async void TimerElapsed(object sender, ElapsedEventArgs args)
+    {
+        await Search();
+    }
+
+    void TextChanged()
+    {
+        timer.Stop();
+        if (lastFilterString?.ToLower() != FilterString?.ToLower())
+        {
+            timer.Start();
+        }
+
+    }
+
+    async Task Search()
+    {
+        if (lastFilterString?.ToLower() != FilterString?.ToLower())
+        {
+            lastFilterString = FilterString;
+            await Parent.Filter(FilterString);
+        }
+    }
+
+    void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
