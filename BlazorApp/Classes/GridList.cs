@@ -21,15 +21,19 @@ namespace BlazorApp
 
         public int TotalCount { get; set; }
 
-        public GridList(string itemType, List<string> header, List<Property> itemProperties, int sortedBy, int currentPage, int pagesCount, int itemsCount)
+        public GridList(string itemType, List<string> header, List<Property> itemProperties, int sortedBy)
         {
             ItemsType = itemType;
             Header = header;
             ItemProperties = itemProperties;
             SortedBy = sortedBy;
-            CurrentPage = currentPage;
-            PagesCount = pagesCount;
-            TotalCount = itemsCount;
+        }
+
+        internal void SetPageCount(int ItemsCount, int PageNumber, int ItemsPerPage)
+        {
+            CurrentPage = PageNumber;
+            PagesCount = (int)Math.Ceiling((ItemsCount + 0.0) / ItemsPerPage);
+            TotalCount = ItemsCount;
         }
 
         public static List<T> GetPage(int PageNumber, int ItemPage, int SortBy, string FilterString)

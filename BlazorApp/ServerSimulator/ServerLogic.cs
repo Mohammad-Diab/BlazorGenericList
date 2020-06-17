@@ -11,18 +11,20 @@ namespace BlazorApp
         {
             var allUsers = await Reader.GetAllUsers();
             await Task.Delay(new Random().Next(500));
-            GridList<User> Result = new GridList<User>(User.ItemType, User.Headers, User.ItemProperties, SortBy, PageNumber, (int)Math.Ceiling((allUsers.Count + 0.0) / ItemsInPage), allUsers.Count);
+            GridList<User> Result = new GridList<User>(User.ItemType, User.Headers, User.ItemProperties, SortBy);
             string param = User.GetSortByProp(Math.Abs(SortBy));
             var propertyInfo = typeof(User).GetProperty(param);
+            var filterdList = allUsers.Where(x => x.IsMatch(FilterString)).ToList();
             if (SortBy < 0)
             {
-                Result.AddRange(allUsers.Where(x => x.IsMatch(FilterString)).OrderByDescending(x => propertyInfo.GetValue(x)).Skip(ItemsInPage * (PageNumber - 1)).Take(ItemsInPage).ToList());
+                Result.AddRange(filterdList.OrderByDescending(x => propertyInfo.GetValue(x)).Skip(ItemsInPage * (PageNumber - 1)).Take(ItemsInPage).ToList());
             }
             else
             {
-                Result.AddRange(allUsers.Where(x => x.IsMatch(FilterString)).OrderBy(x => propertyInfo.GetValue(x)).Skip(ItemsInPage * (PageNumber - 1)).Take(ItemsInPage).ToList());
+                Result.AddRange(filterdList.OrderBy(x => propertyInfo.GetValue(x)).Skip(ItemsInPage * (PageNumber - 1)).Take(ItemsInPage).ToList());
             }
-            
+            Result.SetPageCount(filterdList.Count, PageNumber, ItemsInPage);
+
             return Result;
         }
     }

@@ -1,19 +1,28 @@
 ﻿@typeparam T
+
 @if (EditAbility)
 {
-    <div class="mt-1 mb-3">
+    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
+    <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
+}
+<div class="mt-1 mb-3">
+    @if (EditAbility)
+    {
         <button class="btn btn-primary" @onclick="AddItem">
             <span class="oi oi-plus"></span>
             <span>Add</span>
         </button>
-    </div>
-    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
-    <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
-}
+    }
+<div class="float-right">
+    <CascadingValue Value="@this" Name="UpdateModal">
+        <FilterInput />
+    </CascadingValue>
+</div>
+</div>
 
 @if (ItemsList == null)
 {
-   <Loading ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
+    <Loading ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
 }
 else if (ItemsList.TotalCount == 0)
 {
@@ -21,24 +30,24 @@ else if (ItemsList.TotalCount == 0)
 }
 else
 {
-<CascadingValue Value="@this" Name="UpdateModal">
-    <table style="table-layout: fixed" class="table mt-4">
-        <thead>
-            @TableHeader
-        </thead>
+    <CascadingValue Value="@this" Name="UpdateModal">
+        <table style="table-layout: fixed" class="table mt-4">
+            <thead>
+                @TableHeader
+            </thead>
 
-        <tbody>
-            @for (int i = 0; i < ItemsList.Count; i++)
-            {
-                int index = i;
+            <tbody>
+                @for (int i = 0; i < ItemsList.Count; i++)
+                {
+                    int index = i;
 
-                @ItemRender(ItemsList[i]);
-            }
-        </tbody>
-    </table>
+                    @ItemRender(ItemsList[i]);
+                }
+            </tbody>
+        </table>
 
-    <Pagination CurrentPage="ItemsList.CurrentPage" PagesCount="ItemsList.PagesCount" />
-</CascadingValue>
+        <Pagination CurrentPage="ItemsList.CurrentPage" PagesCount="ItemsList.PagesCount" />
+    </CascadingValue>
 }
 <h3>@Title</h3>
 
@@ -56,9 +65,9 @@ else
     [CascadingParameter(Name = "ItemsPerPage")] public int ItemsPerPage { get; set; }
     [CascadingParameter(Name = "EditAbility")] public bool EditAbility { get; set; }
 
-    [Parameter] public Func<int, int, string, Task> ActionFunc{ get; set; }
+    [Parameter] public Func<int, int, string, Task> ActionFunc { get; set; }
 
-    string filterString = "";
+    string FilterString { get; set; } = "";
 
     T ItemSample = default(T);
 
@@ -68,7 +77,7 @@ else
     async void AddItem()
     {
         T newItem = await Modal.ShowModal($"Add new {ItemsList?.ItemsType?.ToLower() ?? "item"}", DialogMode.Add);
-        if(newItem != null)
+        if (newItem != null)
         {
             ItemsList.Add(newItem);
             StateHasChanged();
@@ -105,18 +114,24 @@ else
 
     public async void Sort(int SortBy)
     {
-        if(SortBy == Math.Abs(ItemsList.SortedBy))
+        if (SortBy == Math.Abs(ItemsList.SortedBy))
         {
             SortBy = -ItemsList.SortedBy;
         }
-        await ActionFunc(ItemsList.CurrentPage, SortBy, filterString);
+        await ActionFunc(ItemsList.CurrentPage, SortBy, FilterString);
     }
 
     public async void GoToPage(int PageNumber)
     {
         PageNumber = PageNumber < 1 ? 1 : PageNumber;
         PageNumber = PageNumber > ItemsList.PagesCount ? ItemsList.PagesCount : PageNumber;
-        await ActionFunc(PageNumber, ItemsList.SortedBy, filterString);
+        await ActionFunc(PageNumber, ItemsList.SortedBy, FilterString);
+    }
+
+    public async Task Filter(string filterString)
+    {
+        FilterString = filterString;
+        await ActionFunc(1, ItemsList.SortedBy, FilterString);
     }
 
 }
