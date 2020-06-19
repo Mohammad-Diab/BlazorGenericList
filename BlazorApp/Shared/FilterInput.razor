@@ -2,7 +2,7 @@
 
 <div class="input-group">
     <input class="form-control my-0 py-1" type="text" placeholder="Filter" @bind-value="FilterString" aria-label="Search" @oninput="(arg) => { FilterString = (string)arg.Value; TextChanged(); }">
-    <div class="input-group-prepend">
+    <div class="input-group-append">
         <span class="input-group-text">
             <i class="oi oi-magnifying-glass" aria-hidden="true"></i>
         </span>

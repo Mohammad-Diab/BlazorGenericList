@@ -269,11 +269,6 @@ table.loading {
     animation: slide-animation 2s ease-in-out infinite;
 }
 
-.input-group > .input-group-prepend:last-child > .input-group-text {
-    border-top-right-radius: .25rem;
-    border-bottom-right-radius: .25rem;
-}
-
 @keyframes slide-animation {
     from {
         left: -200px;
@@ -318,6 +313,10 @@ table.loading {
         position: sticky;
         top: 0;
     }
+
+/*    .alert {
+        margin-left: 2rem;
+    }*/
 
     .main > div {
         padding-left: 2rem !important;
