@@ -11,5 +11,24 @@ namespace BlazorApp
         {
             return await Logic.GetUsers(PageNumber, ItemsInPage, SortBy, FilterString);
         }
+
+        public async static Task<string> AddUser(User NewUser)
+        {
+            (bool result, string errorMessage) addResult = await Logic.AddNewUser(NewUser);
+            return addResult.result ? "" : addResult.errorMessage;
+        }
+
+        public async static Task<string> EditUser(int id, User NewUser)
+        {
+            (bool result, string errorMessage) editResult = await Logic.EditUser(id, NewUser);
+            return editResult.result ? "" : editResult.errorMessage;
+        }
+
+        public async static Task<string> DeleteUser(int id)
+        {
+            (bool result, string errorMessage) deleteResult = await Logic.DeleteUser(id);
+            return deleteResult.result ? "" : deleteResult.errorMessage;
+        }
+
     }
 }

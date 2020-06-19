@@ -25,5 +25,45 @@ namespace BlazorApp
             }
             return AllUsres;
         }
+
+        internal async static Task<(bool result, string errorMessage)> AddUser(User newUser)
+        {
+            await Task.Delay(500);
+            AllUsres.Add(newUser);
+            return (true, "");
+        }
+
+        internal static async Task<(bool result, string errorMessage)> EditUser(int id, User newUser)
+        {
+            await Task.Delay(500);
+
+            int oldUserIndex = AllUsres.FindIndex((x) => x.Id == id);
+            if (oldUserIndex > -1)
+            {
+                AllUsres[oldUserIndex] = newUser;
+                return (true, "");
+            }
+            else
+            {
+                return (false, "Can't find user with this id!");
+            }
+        }
+
+        internal async static Task<(bool result, string errorMessage)> DeleteUser(int id)
+        {
+            await Task.Delay(500);
+
+            int userIndex = AllUsres.FindIndex((x) => x.Id == id);
+            if (userIndex > -1)
+            {
+                AllUsres.RemoveAt(userIndex);
+                return (true, "");
+            }
+            else
+            {
+                return (false, "Can't find user with this id!");
+            }
+        }
+
     }
 }

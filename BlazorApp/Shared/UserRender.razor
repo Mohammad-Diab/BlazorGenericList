@@ -9,11 +9,11 @@
         @if (EditAbility)
         {
         <div class="btn-group">
-            <button class="btn btn-info" @onclick="() => Parent.EditItem(Item, Item.Id.ToString(), Item.FullName)">
+            <button class="btn btn-info" @onclick="() => Parent.ShowEditModal(Item, Item.Id.ToString(), Item.FullName)">
                 <span class="oi oi-pencil"></span>
             </button>
 
-            <button class="btn btn-danger" @onclick="() => Parent.DeleteItem(Item, Item.FullName)">
+            <button class="btn btn-danger" @onclick="() => Parent.ShowDeleteModal(Item, Item.FullName)">
                 <span class="oi oi-delete"></span>
             </button>
         </div>

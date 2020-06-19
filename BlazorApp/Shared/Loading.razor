@@ -1,38 +1,32 @@
-﻿<div class="position-relative overflow-hidden table-borderless">
-    <table class="table loading mt-4">
-        <thead>
-            <tr>
-                @for (int i = 0; i < ColumnsCount; i++)
-                {
-                    <th><div /></th>
-                }
-                @if (Type == LoadingContentType.Grid)
-                {
-                    <th></th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < ItemsPerPage; i++)
-            {
-                <tr>
-                    @for (int j = 0; j < ColumnsCount; j++)
-                    {
-                        <td><div /></td>
-                    }
-                    @if (Type == LoadingContentType.Grid)
-                    {
-                        <td><div class="actions" /></td>
-                    }
-                </tr>
-            }
-
-        </tbody>
-    </table>
-    <div class="position-absolute slider slide-animation"></div>
+﻿
+<div class="loading-overlay justify-content-center @(isVisible ? "" : "d-none")">
+    <div style="border: solid black 1px;" class="m-auto bg-dark text-light px-5 py-3">
+        <div class="spinner-border spinner-border-xl mr-3 align-middle" style="width: 2rem; height: 2rem;">
+            <span class="sr-only">Working on it...</span>
+        </div>
+        <span class="align-middle h4">Working on it...</span>
+    </div>
 </div>
+
 @code {
-    [Parameter] public LoadingContentType Type { get; set; }
-    [Parameter] public int ColumnsCount { get; set; }
-    [CascadingParameter(Name = "ItemsPerPage")] public int ItemsPerPage { get; set; }
+    bool isVisible = false;
+    int showCount = 0;
+
+    public void Show()
+    {
+        isVisible = true;
+        showCount++;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        showCount--;
+        showCount = showCount < 1 ? 0 : showCount;
+        if (showCount == 0)
+        {
+            isVisible = false;
+            StateHasChanged();
+        }
+    }
 }
