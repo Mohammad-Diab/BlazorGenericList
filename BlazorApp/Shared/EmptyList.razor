@@ -1,10 +1,10 @@
 ﻿<div style="height: calc(100vh - 300px);" class="text-center my-4 p-4 position-relative">
     <div style=" height: 75%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <img style="height: 80%; max-height: 196px; width: auto;" src="./images/empty-list.svg" alt="empty list image"/>
-        <div class="text-secondary lonely-text">It's lonely here...</div>
+        <div class="text-secondary lonely-text">@Title</div>
     </div>
 </div>
 
 @code {
-
+    [Parameter] public string Title { get; set; }
 }

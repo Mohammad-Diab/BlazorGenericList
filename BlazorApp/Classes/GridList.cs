@@ -19,26 +19,27 @@ namespace BlazorApp
 
         public int PagesCount { get; set; }
 
+        public int ItemsPerPage { get; set; }
+
         public int TotalCount { get; set; }
 
-        public GridList(string itemType, List<string> header, List<Property> itemProperties, int sortedBy)
+        public string FilterString { get; set; }
+
+        public GridList(string itemType, List<string> header, List<Property> itemProperties, int sortedBy, string filterString)
         {
             ItemsType = itemType;
             Header = header;
             ItemProperties = itemProperties;
             SortedBy = sortedBy;
+            FilterString = filterString;
         }
 
         internal void SetPageCount(int ItemsCount, int PageNumber, int ItemsPerPage)
         {
             CurrentPage = PageNumber;
+            this.ItemsPerPage = ItemsPerPage;
             PagesCount = (int)Math.Ceiling((ItemsCount + 0.0) / ItemsPerPage);
             TotalCount = ItemsCount;
-        }
-
-        public static List<T> GetPage(int PageNumber, int ItemPage, int SortBy, string FilterString)
-        {
-            return null;
         }
     }
 }

@@ -8,25 +8,25 @@
 <div class="mt-1 mb-3">
     @if (EditAbility)
     {
-        <button class="btn btn-primary" @onclick="AddItem">
+        <button class="btn btn-primary" @onclick="ShowAddModal">
             <span class="oi oi-plus"></span>
             <span>Add</span>
         </button>
     }
-<div class="float-right">
-    <CascadingValue Value="@this" Name="UpdateModal">
-        <FilterInput />
-    </CascadingValue>
-</div>
+    <div class="float-right">
+        <CascadingValue Value="@this" Name="UpdateModal">
+            <FilterInput />
+        </CascadingValue>
+    </div>
 </div>
 
 @if (ItemsList == null)
 {
-    <Loading ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
+    <LazyContent ItemsPerPage="ItemsPerPage" ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
 }
 else if (ItemsList.TotalCount == 0)
 {
-    <EmptyList />
+    <EmptyList Title="@(string.IsNullOrEmpty(FilterString) ? "It's lonely here..." : "No items match your search!")" />
 }
 else
 {
@@ -53,19 +53,22 @@ else
 
 @code {
 
-
     [Parameter] public string Title { get; set; }
     [Parameter] public int GridColumnsCount { get; set; }
+    [Parameter] public int ItemsPerPage { get; set; }
 
     [Parameter] public GridList<T> ItemsList { get; set; }
 
     [Parameter] public RenderFragment TableHeader { get; set; }
     [Parameter] public RenderFragment<T> ItemRender { get; set; }
 
-    [CascadingParameter(Name = "ItemsPerPage")] public int ItemsPerPage { get; set; }
+    [CascadingParameter(Name = "LoadingPanal")] public Loading LoadingPanal { get; set; }
     [CascadingParameter(Name = "EditAbility")] public bool EditAbility { get; set; }
 
     [Parameter] public Func<int, int, string, Task> ActionFunc { get; set; }
+    [Parameter] public Func<T, Task> AddItem { get; set; }
+    [Parameter] public Func<string, T, Task> EditItem { get; set; }
+    [Parameter] public Func<T, Task> DeleteItem { get; set; }
 
     string FilterString { get; set; } = "";
 
@@ -74,41 +77,30 @@ else
     UpdateModal<T> Modal;
     ConfirmDialog ConfirmModal;
 
-    async void AddItem()
+    async void ShowAddModal()
     {
-        T newItem = await Modal.ShowModal($"Add new {ItemsList?.ItemsType?.ToLower() ?? "item"}", DialogMode.Add);
-        if (newItem != null)
+        var result = await Modal.ShowModal($"Add new {ItemsList?.ItemsType?.ToLower() ?? "item"}", DialogMode.Add);
+        if (result.ModalResult == DialogResult.Ok && result.NewItem != null)
         {
-            ItemsList.Add(newItem);
-            StateHasChanged();
+            await AddItem(result.NewItem);
         }
     }
 
-    public async void EditItem(T Item, string ItemId, string itemName)
+    public async void ShowEditModal(T Item, string ItemId, string itemName)
     {
-        T newItem = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
-        if (newItem != null)
+        var result = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
+        if (result.ModalResult == DialogResult.Ok && result.NewItem != null)
         {
-            for (int i = 0; i < (ItemsList?.ItemProperties.Count ?? 0); i++)
-            {
-                var newProp = typeof(T).GetProperty(ItemsList.ItemProperties[i].Key);
-                var newValue = newProp.GetValue(newItem);
-
-                var destinationProp = typeof(T).GetProperty(ItemsList.ItemProperties[i].Key);
-                destinationProp.SetValue(Item, newValue);
-            }
-            StateHasChanged();
+            await EditItem(ItemId, result.NewItem);
         }
     }
 
-    public async void DeleteItem(T Item, string itemName)
+    public async void ShowDeleteModal(T Item, string itemName)
     {
         DialogResult result = await ConfirmModal.ShowModal($"Deleting {itemName}", $"Do you really want to delete '{itemName}'?", ConfirmType.Delete);
         if (result == DialogResult.Ok)
         {
-            Console.WriteLine("Ok");
-            ItemsList.Remove(Item);
-            StateHasChanged();
+            await DeleteItem(Item);
         }
     }
 

@@ -1,10 +1,13 @@
 ﻿@page "/"
 
+<Notification @ref="NotificationPanal" Timeout="5000" />
+<Loading @ref="LoadingPanal"/>
 <h1>Hello, Blazor 🙂.</h1>
-<hr class="my-3"/>
+<hr class="my-3" />
 <CascadingValue Name="EditAbility" Value="EditAbility">
-    <CascadingValue Name="ItemsPerPage" Value="ItemsPerPage">
-        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ActionFunc="Action">
+    <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
+        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="ItemsPerPage"
+                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser">
             <TableHeader>
                 <HeaderRender Headers="ItemList?.Header" />
             </TableHeader>
@@ -15,21 +18,95 @@
     </CascadingValue>
 </CascadingValue>
 
-    @code{
+@code{
         GridList<User> ItemList;
         bool EditAbility = true;
+
+        Loading LoadingPanal;
+        Notification NotificationPanal;
+
         int ItemsPerPage = 3;
 
-        protected override async Task OnInitializedAsync()
-        {
-            ItemList = await Controller.GetUsers(1, ItemsPerPage, User.DefaultSortedBy);
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        ItemList = await Controller.GetUsers(1, ItemsPerPage, User.DefaultSortedBy);
+    }
 
-        async Task Action(int PageNumber, int SortBy, string FilterString = "")
+    async Task Action(int PageNumber, int SortBy, string FilterString = "")
+    {
+        ItemList = null;
+        StateHasChanged();
+        ItemList = await Controller.GetUsers(PageNumber, ItemsPerPage, SortBy, FilterString);
+        StateHasChanged();
+    }
+
+    async Task AddUser(User newUser)
+    {
+        LoadingPanal.Show();
+        string result = await Controller.AddUser(newUser);
+        LoadingPanal.Hide();
+        if (!string.IsNullOrEmpty(result))
         {
-            ItemList = null;
-            StateHasChanged();
-            ItemList = await Controller.GetUsers(PageNumber, ItemsPerPage, SortBy, FilterString);
+            NotificationPanal.Show(NotificationType.Error, result, true, $"Can't add '{newUser.Username}'!");
+        }
+        else
+        {
+            ItemList.Add(newUser);
+            ItemList.TotalCount++;
             StateHasChanged();
         }
     }
+
+    async Task EditUser(string id, User newUser)
+    {
+        if (int.TryParse(id, out int userId))
+        {
+            LoadingPanal.Show();
+            string result = await Controller.EditUser(userId, newUser);
+            LoadingPanal.Hide();
+            if (!string.IsNullOrEmpty(result))
+            {
+                NotificationPanal.Show(NotificationType.Error, result, true, $"Can't Edit '{newUser.Username}'!");
+            }
+            else
+            {
+                int oldUserIndex = ItemList.FindIndex((x) => x.Id == userId);
+                if (oldUserIndex > -1)
+                {
+                    ItemList[oldUserIndex] = newUser;
+                    StateHasChanged();
+                }
+            }
+        }
+        else
+        {
+            NotificationPanal.Show(NotificationType.Error, "Invalid Id format!", true);
+        }
+    }
+
+    async Task DeleteUser(User User)
+    {
+        LoadingPanal.Show();
+        string result = await Controller.DeleteUser(User.Id);
+        LoadingPanal.Hide();
+        if (!string.IsNullOrEmpty(result))
+        {
+            NotificationPanal.Show(NotificationType.Error, result, true, $"Can't delete '{User.Username}'!");
+        }
+        else
+        {
+            ItemList.Remove(User);
+            ItemList.TotalCount--;
+            if (ItemList.Count == 0 && ItemList.PagesCount > 1)
+            {
+                int pageNumber = ItemList.CurrentPage == ItemList.PagesCount ? ItemList.PagesCount - 1 : ItemList.CurrentPage;
+                int sortBy = ItemList.SortedBy;
+                string filterstring = ItemList.FilterString;
+                ItemList = null;
+                StateHasChanged();
+                ItemList = await Controller.GetUsers(pageNumber, ItemsPerPage, sortBy, filterstring);
+            }
+            StateHasChanged();
+        }
+    }
+}

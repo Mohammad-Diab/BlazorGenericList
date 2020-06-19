@@ -279,6 +279,26 @@ table.loading {
     }
 }
 
+.loading-overlay {
+    display: flex;
+    z-index: 1500;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/*.alert {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}*/
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

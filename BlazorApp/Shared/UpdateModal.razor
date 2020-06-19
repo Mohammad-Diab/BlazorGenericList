@@ -50,7 +50,7 @@
     string ModalTitle { get; set; }
     DialogMode DialogMode { get; set; }
 
-    DialogResult Result = DialogResult.Undefiend;
+    DialogResult ModalResult{ get; set; } = DialogResult.Undefiend;
 
     T Item { get; set; }
 
@@ -61,7 +61,7 @@
     bool IsAnimating = false;
     string FocusClassName = "";
 
-    public async Task<T> ShowModal(string ModalTitle, DialogMode Mode, string ItemId = null, T Item = default(T))
+    public async Task<(DialogResult ModalResult, T NewItem)> ShowModal(string ModalTitle, DialogMode Mode, string ItemId = null, T Item = default(T))
     {
         this.ModalTitle = ModalTitle;
         DialogMode = Mode;
@@ -83,16 +83,17 @@
             }
         }
         ConfirmButtonText = (Mode == DialogMode.Add ? "Add" : "Edit");
-        Result = DialogResult.Undefiend;
+        ModalResult = DialogResult.Undefiend;
         IsShown = true;
         StateHasChanged();
 
-        while (Result == DialogResult.Undefiend)
+        while (ModalResult == DialogResult.Undefiend)
         {
             await Task.Delay(50);
         }
+        T updatedItem = default(T);
 
-        if (Result == DialogResult.Ok)
+        if (ModalResult == DialogResult.Ok)
         {
             var param = new List<object>();
             if (Mode == DialogMode.Edit)
@@ -110,12 +111,10 @@
                 Console.WriteLine($"{i} = {param[i]}");
             }
 
-            T result = (T)Activator.CreateInstance(typeof(T), param.ToArray());
-
-            return result;
+            updatedItem = (T)Activator.CreateInstance(typeof(T), param.ToArray());
         }
 
-        return default(T);
+        return (ModalResult, updatedItem);
 
     }
 
@@ -129,13 +128,13 @@
 
     async Task Cancel()
     {
-        Result = DialogResult.Cancel;
+        ModalResult = DialogResult.Cancel;
         await CloseModal();
     }
 
     async Task Confirm()
     {
-        Result = DialogResult.Ok;
+        ModalResult = DialogResult.Ok;
         await CloseModal();
         //for (int i = 0; i < Properties.Count; i++)
         //{
