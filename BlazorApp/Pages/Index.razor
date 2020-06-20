@@ -1,12 +1,13 @@
 ﻿@page "/"
+@inject SettingsService AppSettings
 
 <Notification @ref="NotificationPanal" Timeout="5000" />
-<Loading @ref="LoadingPanal"/>
+<Loading @ref="LoadingPanal" />
 <h1>Hello, Blazor 🙂.</h1>
 <hr class="my-3" />
-<CascadingValue Name="EditAbility" Value="EditAbility">
+<CascadingValue Name="EditAbility" Value="AppSettings.IsAdmin">
     <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
-        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="ItemsPerPage"
+        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
                      ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser">
             <TableHeader>
                 <HeaderRender Headers="ItemList?.Header" />
@@ -19,24 +20,22 @@
 </CascadingValue>
 
 @code{
-        GridList<User> ItemList;
-        bool EditAbility = true;
+    GridList<User> ItemList;
+    bool EditAbility = true;
 
-        Loading LoadingPanal;
-        Notification NotificationPanal;
-
-        int ItemsPerPage = 3;
+    Loading LoadingPanal;
+    Notification NotificationPanal;
 
     protected override async Task OnInitializedAsync()
     {
-        ItemList = await Controller.GetUsers(1, ItemsPerPage, User.DefaultSortedBy);
+        ItemList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
     }
 
     async Task Action(int PageNumber, int SortBy, string FilterString = "")
     {
         ItemList = null;
         StateHasChanged();
-        ItemList = await Controller.GetUsers(PageNumber, ItemsPerPage, SortBy, FilterString);
+        ItemList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
         StateHasChanged();
     }
 
@@ -104,7 +103,7 @@
                 string filterstring = ItemList.FilterString;
                 ItemList = null;
                 StateHasChanged();
-                ItemList = await Controller.GetUsers(pageNumber, ItemsPerPage, sortBy, filterstring);
+                ItemList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
             }
             StateHasChanged();
         }

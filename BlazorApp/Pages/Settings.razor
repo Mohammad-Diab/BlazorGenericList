@@ -1,0 +1,32 @@
+﻿@page "/settings"
+@inject SettingsService AppSettings
+
+<h3>App Settings</h3>
+<div class="row mt-4">
+    <div class="col-12 col-md-6">
+        <div class="form-group">
+            <label for="item-per-page">Items per page</label>
+            <select @bind="AppSettings.ItemsPerPage" id="item-per-page" class="form-control">
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-12 col-md-6">
+        <div class="form-group">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input @bind="AppSettings.IsAdmin" type="checkbox" class="custom-control-input" id="is-admin">
+                <label class="custom-control-label" for="is-admin">Is ADMIN?</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    //[Parameter] public List<Settings> Settings { get; set; }
+}
