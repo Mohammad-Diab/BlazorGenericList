@@ -5,7 +5,7 @@
     <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
     <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
-<div class="mt-1 mb-3 overflow-hidden">
+<div class="mt-1 mb-3" style="overflow: visible;">
     @if (EditAbility)
     {
         <button class="btn btn-primary" @onclick="ShowAddModal">
@@ -13,6 +13,9 @@
             <span>Add</span>
         </button>
     }
+
+    <Dropdown ButtonTitle="@("Export")" DropDownItems="ExportDropdownItems" OnSelect="Export" />
+
     <div class="float-right">
         <CascadingValue Value="@this" Name="UpdateModal">
             <FilterInput />
@@ -70,12 +73,25 @@ else
     [Parameter] public Func<string, T, Task> EditItem { get; set; }
     [Parameter] public Func<T, Task> DeleteItem { get; set; }
 
+    [Parameter] public Func<string, Task> ExportItems { get; set; }
+
     string FilterString { get; set; } = "";
 
     T ItemSample = default(T);
 
     UpdateModal<T> Modal;
     ConfirmDialog ConfirmModal;
+
+    List<DropdownItem> ExportDropdownItems = new List<DropdownItem>()
+    {
+        new DropdownItem("header","Human readable formats",DropdownType.Header),
+        new DropdownItem("csv","CSV",DropdownType.Button),
+        new DropdownItem("pdf","PDF",DropdownType.Button),
+        new DropdownItem("divider","Divider",DropdownType.Divider),
+        new DropdownItem("header","Machine readable formats",DropdownType.Header),
+        new DropdownItem("json","JSON",DropdownType.Button),
+        new DropdownItem("xml","XML",DropdownType.Button)
+    };
 
     async void ShowAddModal()
     {
@@ -124,6 +140,11 @@ else
     {
         FilterString = filterString;
         await ActionFunc(1, ItemsList.SortedBy, FilterString);
+    }
+
+    public async Task Export(string type)
+    {
+        await ExportItems(type);
     }
 
 }

@@ -45,4 +45,11 @@ namespace BlazorApp
         Warning = 2,
         Error = 3
     }
+
+    public enum DropdownType
+    {
+        Button = 0,
+        Header = 1,
+        Divider = 2
+    }
 }

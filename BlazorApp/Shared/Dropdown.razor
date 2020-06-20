@@ -1,0 +1,50 @@
+﻿<div class="@(isShown ? "" : "d-none")" style="position: fixed; top: 0; right:0; left: 0; bottom:0; z-index:999;" @onmousedown="Hide"></div>
+<div class="btn-group">
+    <button type="button" class="btn btn-info dropdown-toggle @(isShown ? "show" : "")" @onclick="Toggle">
+        @ButtonTitle
+    </button>
+    <div class="dropdown-menu @(isShown ? "show" : "")">
+        @for (int i = 0; i < DropDownItems.Count; i++)
+        {
+            int index = i;
+            switch (DropDownItems[i].Type)
+            {
+                case DropdownType.Button:
+                    <a class="dropdown-item" href="#" @onclick="() => { Hide(); OnSelect.InvokeAsync(DropDownItems[index].Key); }">@DropDownItems[i].Value</a>
+                    break;
+                case DropdownType.Header:
+                    <h6 class="dropdown-header">@DropDownItems[i].Value</h6>
+                    break;
+                case DropdownType.Divider:
+                    <div class="dropdown-divider"></div>
+                    break;
+                default:
+                    <a class="dropdown-item" href="#">@DropDownItems[i].Value</a>
+                    break;
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string ButtonTitle { get; set; }
+    [Parameter] public List<DropdownItem> DropDownItems { get; set; }
+    [Parameter] public EventCallback<string> OnSelect { get; set; }
+
+    bool isShown = false;
+
+    void Toggle()
+    {
+        isShown = !isShown;
+    }
+
+    void Show()
+    {
+        isShown = true;
+    }
+
+    void Hide()
+    {
+        isShown = false;
+    }
+}
