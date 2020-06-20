@@ -30,5 +30,10 @@ namespace BlazorApp
             return deleteResult.result ? "" : deleteResult.errorMessage;
         }
 
+        public async static Task ExportUsers(string type)
+        {
+            await Task.Delay(1000);
+        }
+
     }
 }

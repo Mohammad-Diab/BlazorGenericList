@@ -8,7 +8,7 @@
 <CascadingValue Name="EditAbility" Value="AppSettings.IsAdmin">
     <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
         <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
-                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser">
+                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems">
             <TableHeader>
                 <HeaderRender Headers="ItemList?.Header" />
             </TableHeader>
@@ -20,11 +20,10 @@
 </CascadingValue>
 
 @code{
-    GridList<User> ItemList;
-    bool EditAbility = true;
+        GridList<User> ItemList;
 
-    Loading LoadingPanal;
-    Notification NotificationPanal;
+        Loading LoadingPanal;
+        Notification NotificationPanal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,5 +106,13 @@
             }
             StateHasChanged();
         }
+    }
+
+    async Task ExportItems(string type)
+    {
+        LoadingPanal.Show();
+        Console.WriteLine($"Exporting as {type}");
+        await Controller.ExportUsers(type);
+        LoadingPanal.Hide();
     }
 }
