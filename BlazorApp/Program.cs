@@ -19,6 +19,8 @@ namespace BlazorApp
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            builder.Services.AddSingleton<SettingsService>();
+
             await builder.Build().RunAsync();
         }
     }
