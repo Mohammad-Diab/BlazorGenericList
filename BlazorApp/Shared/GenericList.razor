@@ -1,22 +1,35 @@
 ﻿@typeparam T
 
-@if (EditAbility)
+@if (!string.IsNullOrEmpty(Title))
+{
+    <h3>@Title</h3>
+}
+
+@if (EditAbility && GridType == GridType.Edit)
 {
     <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
     <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
-<div class="mt-1 mb-3" style="overflow: visible;">
-    @if (EditAbility)
+<div class="mt-1 mb-3 @(GridType == GridType.Edit ? "" : "text-right")" style="overflow: visible;">
+    @if (GridType == GridType.Edit)
     {
-        <button class="btn btn-primary" @onclick="ShowAddModal">
-            <span class="oi oi-plus"></span>
-            <span>Add</span>
-        </button>
+        @if (EditAbility)
+        {
+            <button class="btn btn-primary" @onclick="ShowAddModal">
+                <span class="oi oi-plus align-middle"></span>
+                <span class="ml-1 align-middle">Add</span>
+            </button>
+
+            <button class="btn btn-danger" @onclick="ShowDeleteAllModal">
+                <span class="oi oi-delete align-middle"></span>
+                <span class="ml-1 align-middle">Delete selected items</span>
+            </button>
+        }
+
+        <Dropdown ButtonTitle="@("Export")" DropDownItems="ExportDropdownItems" OnSelect="Export" />
     }
 
-    <Dropdown ButtonTitle="@("Export")" DropDownItems="ExportDropdownItems" OnSelect="Export" />
-
-    <div class="float-right">
+    <div class="@(GridType == GridType.Edit ? "float-right" : "d-inline-block")">
         <CascadingValue Value="@this" Name="UpdateModal">
             <FilterInput />
         </CascadingValue>
@@ -25,7 +38,7 @@
 
 @if (ItemsList == null)
 {
-    <LazyContent ItemsPerPage="ItemsPerPage" ColumnsCount="GridColumnsCount" Type="LoadingContentType.Grid" />
+    <LazyContent ItemsPerPage="ItemsPerPage" ColumnsCount="GridColumnsCount" Type="@(GridType == GridType.Select ? LoadingContentType.SelectGrid : LoadingContentType.Grid)" />
 }
 else if (ItemsList.TotalCount == 0)
 {
@@ -42,8 +55,6 @@ else
             <tbody>
                 @for (int i = 0; i < ItemsList.Count; i++)
                 {
-                    int index = i;
-
                     @ItemRender(ItemsList[i]);
                 }
             </tbody>
@@ -52,11 +63,11 @@ else
         <Pagination CurrentPage="ItemsList.CurrentPage" PagesCount="ItemsList.PagesCount" />
     </CascadingValue>
 }
-<h3>@Title</h3>
 
 @code {
 
     [Parameter] public string Title { get; set; }
+    [Parameter] public GridType GridType { get; set; }
     [Parameter] public int GridColumnsCount { get; set; }
     [Parameter] public int ItemsPerPage { get; set; }
 
@@ -73,9 +84,19 @@ else
     [Parameter] public Func<string, T, Task> EditItem { get; set; }
     [Parameter] public Func<T, Task> DeleteItem { get; set; }
 
+    [Parameter] public Func<List<T>, Task> DeleteAllItems { get; set; }
+
     [Parameter] public Func<string, Task> ExportItems { get; set; }
 
+    [Parameter] public Func<bool, List<int>> SelectAllItems { get; set; }
+
     string FilterString { get; set; } = "";
+
+    //public bool? SelectAllValue { get; set; } = false;
+
+    //HashSet<int> selectedId = new HashSet<int>();
+
+    public HashSet<T> SelectedItems = new HashSet<T>();
 
     T ItemSample = default(T);
 
@@ -83,7 +104,7 @@ else
     ConfirmDialog ConfirmModal;
 
     List<DropdownItem> ExportDropdownItems = new List<DropdownItem>()
-    {
+{
         new DropdownItem("header","Human readable formats",DropdownType.Header),
         new DropdownItem("csv","CSV",DropdownType.Button),
         new DropdownItem("pdf","PDF",DropdownType.Button),
@@ -104,6 +125,7 @@ else
 
     public async void ShowEditModal(T Item, string ItemId, string itemName)
     {
+        //Console.WriteLine(SelectAllValue);
         var result = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
         if (result.ModalResult == DialogResult.Ok && result.NewItem != null)
         {
@@ -120,31 +142,91 @@ else
         }
     }
 
+    public async void ShowDeleteAllModal()
+    {
+        //SelectAllValue = null;
+        List<T> list = new List<T>();
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {450} items", $"Do you really want to delete '{450} items'?", ConfirmType.Delete);
+        if (result == DialogResult.Ok)
+        {
+            await DeleteAllItems(list);
+        }
+    }
+
     public async void Sort(int SortBy)
     {
         if (SortBy == Math.Abs(ItemsList.SortedBy))
         {
             SortBy = -ItemsList.SortedBy;
         }
-        await ActionFunc(ItemsList.CurrentPage, SortBy, FilterString);
+        await ActionFuncPrepare(ItemsList.CurrentPage, SortBy, FilterString);
     }
 
     public async void GoToPage(int PageNumber)
     {
         PageNumber = PageNumber < 1 ? 1 : PageNumber;
         PageNumber = PageNumber > ItemsList.PagesCount ? ItemsList.PagesCount : PageNumber;
-        await ActionFunc(PageNumber, ItemsList.SortedBy, FilterString);
+        await ActionFuncPrepare(PageNumber, ItemsList.SortedBy, FilterString);
     }
 
     public async Task Filter(string filterString)
     {
         FilterString = filterString;
-        await ActionFunc(1, ItemsList.SortedBy, FilterString);
+        await ActionFuncPrepare(1, ItemsList.SortedBy, FilterString);
+    }
+
+    public async Task ActionFuncPrepare(int PageNumber,int SortBy, string FilterString)
+    {
+        if (GridType == GridType.Edit)
+            SelectedItems.Clear();
+        await ActionFunc(PageNumber, SortBy, FilterString);
     }
 
     public async Task Export(string type)
     {
         await ExportItems(type);
     }
+
+    public List<T> GetSelectedItems()
+    {
+        if (GridType == GridType.Select)
+            return SelectedItems.ToList();
+        return null;
+    }
+
+    //public void SelectAll()
+    //{
+    //    Console.WriteLine($"SelectAllValue = {SelectAllValue}");
+    //    SelectAllItems(SelectAllValue ?? true);
+    //    StateHasChanged();
+    //}
+
+    //public void SelectChange(int id, bool isSelected)
+    //{
+    //    Console.WriteLine($"Id = {id}, isSelected = {isSelected}");
+    //    if (isSelected)
+    //    {
+    //        selectedId.Add(id);
+    //    }
+    //    else
+    //    {
+    //        selectedId.Remove(id);
+    //    }
+
+    //    if (selectedId.Count == 0)
+    //    {
+    //        SelectAllValue = false;
+    //    }
+    //    else if (selectedId.Count == ItemsList.Count)
+    //    {
+    //        SelectAllValue = true;
+    //    }
+    //    else
+    //    {
+    //        SelectAllValue = null;
+    //    }
+    //    Console.WriteLine($"selectedId.Count = {selectedId.Count}");
+    //    StateHasChanged();
+    //}
 
 }

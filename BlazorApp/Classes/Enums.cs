@@ -36,6 +36,7 @@ namespace BlazorApp
     public enum LoadingContentType
     {
         Grid = 1,
+        SelectGrid = 2
     }
 
     public enum NotificationType
@@ -51,5 +52,11 @@ namespace BlazorApp
         Button = 0,
         Header = 1,
         Divider = 2
+    }
+
+    public enum GridType
+    {
+        Edit = 0,
+        Select = 1,
     }
 }
