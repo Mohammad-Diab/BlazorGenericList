@@ -38,7 +38,7 @@
 
 @if (ItemsList == null)
 {
-    <LazyContent ItemsPerPage="ItemsPerPage" ColumnsCount="GridColumnsCount" Type="@(GridType == GridType.Select ? LoadingContentType.SelectGrid : LoadingContentType.Grid)" />
+    <LazyContent ItemsPerPage="ItemsPerPage" ColumnsCount="GridColumnsCount" Type="@(GridType == GridType.Edit ? LoadingContentType.Grid : LoadingContentType.SelectGrid)" />
 }
 else if (ItemsList.TotalCount == 0)
 {
@@ -189,7 +189,7 @@ else
 
     public List<T> GetSelectedItems()
     {
-        if (GridType == GridType.Select)
+        if (GridType != GridType.Edit)
             return SelectedItems.ToList();
         return null;
     }

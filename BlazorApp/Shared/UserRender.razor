@@ -1,5 +1,5 @@
 ﻿<tr>
-    @if (Parent.EditAbility || Parent.GridType == GridType.Select)
+    @if (Parent.EditAbility || Parent.GridType != GridType.Edit)
     {
         <td class="align-middle">
             <div title="Select '@Item.FullName'" class="custom-control custom-checkbox">
@@ -63,6 +63,8 @@
             //Item.IsSelected = isSelected;
             if (isSelected)
             {
+                if (Parent.GridType == GridType.SingleSelect)
+                    Parent.SelectedItems.Clear();
                 Parent.SelectedItems.Add(Item);
             }
             else

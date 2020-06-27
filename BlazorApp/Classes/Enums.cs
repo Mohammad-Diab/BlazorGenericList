@@ -57,6 +57,7 @@ namespace BlazorApp
     public enum GridType
     {
         Edit = 0,
-        Select = 1,
+        MultiSelect = 1,
+        SingleSelect = 1,
     }
 }
