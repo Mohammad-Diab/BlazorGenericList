@@ -1,0 +1,197 @@
+﻿@page "/selectgrids"
+@inject SettingsService AppSettings
+
+<div class="modal @(IsShown ? "show d-block" : "")" tabindex="-1" role="dialog">
+    <div style="z-index: unset;" class="modal-backdrop @(IsShown ? "show" : "d-none")" @onclick="FocusModal"></div>
+    <div class="modal-dialog modal-xl modal-dialog-centered animate__animated @AnimateClassName" role="document">
+        <div class="modal-content animate__animated animate__fast @FocusClassName">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">In modal Grid</h5>
+                <button type="button" class="close" @onclick="Cancel" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <GenericList @ref="InModalGridObj" GridType="GridType.Select" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+                             ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction">
+                    <TableHeader>
+                        <HeaderRender Headers="InModalUserList?.Header" />
+                    </TableHeader>
+                    <ItemRender>
+                        <UserRender Item="context" />
+                    </ItemRender>
+                </GenericList>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Close</button>
+                <button type="button" class="btn btn-success" @onclick="Confirm">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>In Modal Grid</h3>
+<div class="my-3">
+    <button class="btn btn-primary" @onclick="ShowModal1">Open modal...</button>
+</div>
+<h4>Selected Users</h4>
+<p>
+    @for (int i = 0; i < InModalGridSelectedUsers?.Count; i++)
+    {
+        @($"{InModalGridSelectedUsers[i].Id} : {InModalGridSelectedUsers[i].FullName}")
+        <br />
+    }
+</p>
+<hr />
+
+<h3>In autocomplete</h3>
+<AutoComplete @ref="AutoCompleteObj" Title="In autocomplete - Select users to use:" T="User" ActionFunc="AutoCompleteFilterList" ConvertToAutoCompleteItem="UserToAutoCompleteConverter" />
+<h4>Selected Users <button class="btn btn-secondary" @onclick="GetAutoCompleteSelectedUsers">Read</button></h4>
+<p>
+    @for (int i = 0; i < AutoCompleteSelectedUsers?.Count; i++)
+    {
+        @($"{AutoCompleteSelectedUsers[i].Key} : {AutoCompleteSelectedUsers[i].Value}")
+        <br />
+    }
+</p>
+<hr />
+
+<GenericList @ref="InlineGridObj" GridType="GridType.Select" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+             ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction">
+    <TableHeader>
+        <HeaderRender Headers="InlineUsersList?.Header" />
+    </TableHeader>
+    <ItemRender>
+        <UserRender Item="context" />
+    </ItemRender>
+</GenericList>
+<h4>Selected Users <button class="btn btn-secondary" @onclick="GetInlineGridSelectedUsers">Read</button></h4>
+<p>
+    @for (int i = 0; i < InlineGridSelectedUsers?.Count; i++)
+    {
+        @($"{InlineGridSelectedUsers[i].Id} : {InlineGridSelectedUsers[i].FullName}")
+        <br />
+    }
+</p>
+<hr />
+
+@code {
+    GridList<User> InlineUsersList, InModalUserList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        InlineUsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+    }
+
+    async Task InlineAction(int PageNumber, int SortBy, string FilterString = "")
+    {
+        InlineUsersList = null;
+        StateHasChanged();
+        InlineUsersList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
+        StateHasChanged();
+    }
+
+    async Task InModalAction(int PageNumber, int SortBy, string FilterString = "")
+    {
+        InModalUserList = null;
+        StateHasChanged();
+        InModalUserList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
+        StateHasChanged();
+    }
+
+    bool IsShown = false;
+    string AnimateClassName = "animate__bounceIn animate__fast";
+    string FocusClassName = "";
+
+    DialogResult Result = DialogResult.Undefiend;
+
+    bool IsAnimating = false;
+
+    public async Task<DialogResult> ShowModal()
+    {
+        Result = DialogResult.Undefiend;
+        IsShown = true;
+        InModalUserList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+        StateHasChanged();
+
+        while (Result == DialogResult.Undefiend)
+        {
+            await Task.Delay(50);
+        }
+
+        return Result;
+    }
+
+    public async Task FocusModal()
+    {
+        if (IsAnimating)
+            return;
+        IsAnimating = true;
+        FocusClassName = "animate__tada";
+        await Task.Delay(600);
+        FocusClassName = "";
+        IsAnimating = false;
+    }
+
+    public async Task CloseModal()
+    {
+        AnimateClassName = "animate__bounceOut animate__faster";
+        await Task.Delay(500);
+        IsShown = false;
+        InModalUserList = null;
+        AnimateClassName = "animate__bounceIn animate__fast";
+    }
+
+    public async Task Confirm()
+    {
+        Result = DialogResult.Ok;
+        await CloseModal();
+    }
+
+    public async Task Cancel()
+    {
+        Result = DialogResult.Cancel;
+        await CloseModal();
+    }
+
+
+    AutoComplete<User> AutoCompleteObj;
+    List<AutoCompleteItem> AutoCompleteSelectedUsers;
+
+    async Task<List<User>> AutoCompleteFilterList(string FilterString)
+    {
+        List<User> result = new List<User>();
+        result = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy, FilterString);
+        return result;
+    }
+
+    AutoCompleteItem UserToAutoCompleteConverter(User User)
+    {
+        return new AutoCompleteItem() { Key = User.Id.ToString(), Value = User.FullName };
+    }
+
+    void GetAutoCompleteSelectedUsers()
+    {
+        AutoCompleteSelectedUsers = AutoCompleteObj.GetSelectedItems();
+    }
+
+    GenericList<User> InlineGridObj;
+    List<User> InlineGridSelectedUsers;
+    void GetInlineGridSelectedUsers()
+    {
+        InlineGridSelectedUsers = InlineGridObj.GetSelectedItems();
+    }
+
+    GenericList<User> InModalGridObj;
+    List<User> InModalGridSelectedUsers;
+
+    public async void ShowModal1()
+    {
+        Result = await ShowModal();
+        if (Result == DialogResult.Cancel)
+        {
+            InModalGridObj.SelectedItems.Clear();
+        }
+        InModalGridSelectedUsers = InModalGridObj.GetSelectedItems();
+    }
+}

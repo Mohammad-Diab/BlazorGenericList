@@ -1,35 +1,90 @@
 ﻿<tr>
+    @if (Parent.EditAbility || Parent.GridType == GridType.Select)
+    {
+        <td class="align-middle">
+            <div title="Select '@Item.FullName'" class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input rowCheckbox" id="check-item-row-@Id" @bind="@IsSelected">
+                <label class="custom-control-label" for="check-item-row-@Id"></label>
+            </div>
+        </td>
+    }
     <td class="align-middle">@Item.Id</td>
     <td class="align-middle">@Item.Username</td>
     <td class="align-middle">@Item.FullName</td>
     <td class="align-middle">@Item.Birthday.ToString("yyyy MMM dd")</td>
     <td class="align-middle">@Item.Email</td>
     <td class="align-middle">@Item.Phone</td>
-    <td>
-        @if (EditAbility)
-        {
-        <div class="btn-group">
-            <button class="btn btn-info" @onclick="() => Parent.ShowEditModal(Item, Item.Id.ToString(), Item.FullName)">
-                <span class="oi oi-pencil"></span>
-            </button>
+    @if (Parent.GridType == GridType.Edit)
+    {
+        <td>
+            @if (Parent.EditAbility)
+            {
+                <div class="btn-group">
+                    <button class="btn btn-info" @onclick="() => Parent.ShowEditModal(Item, Item.Id.ToString(), Item.FullName)">
+                        <span class="oi oi-pencil"></span>
+                    </button>
 
-            <button class="btn btn-danger" @onclick="() => Parent.ShowDeleteModal(Item, Item.FullName)">
-                <span class="oi oi-delete"></span>
-            </button>
-        </div>
-        }
-        else
-        {
-            <code>no_actions_avialable</code>
-        }
+                    <button class="btn btn-danger" @onclick="() => Parent.ShowDeleteModal(Item, Item.FullName)">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </div>
+            }
+            else
+            {
+                <code>no_actions_avialable</code>
+            }
 
-    </td>
+        </td>
+    }
 </tr>
 
 @code {
     [Parameter] public User Item { get; set; }
-    [CascadingParameter(Name = "EditAbility")] public bool EditAbility { get; set; }
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+    string Id;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Id = Guid.NewGuid().ToString();
+        isSelected = Parent.SelectedItems?.Contains(Item) ?? false;
+    }
+
+    bool isSelected = false;
+
+    bool IsSelected
+    {
+        get
+        {
+            return isSelected;
+        }
+        set
+        {
+            isSelected = value;
+            //Item.IsSelected = isSelected;
+            if (isSelected)
+            {
+                Parent.SelectedItems.Add(Item);
+            }
+            else
+            {
+                Parent.SelectedItems.Remove(Item);
+            }
+        }
+    }
+
+    void ToggleCheckbox(bool? isChecked = null)
+    {
+        Console.WriteLine("Hid");
+        if(isChecked.HasValue)
+        {
+            //Item.IsSelected = isChecked.Value;
+        }
+        else
+        {
+            //Item.IsSelected = !Item.IsSelected;
+            //Parent.SelectChange(Item.Id, Item.IsSelected);
+        }
+    }
 
     //[Parameter] public EventCallback<User> DeleteUser { get; set; }
     //[Parameter] public Action<User, string, string> EditUser { get; set; }

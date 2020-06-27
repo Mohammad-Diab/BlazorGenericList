@@ -7,10 +7,11 @@
 <hr class="my-3" />
 <CascadingValue Name="EditAbility" Value="AppSettings.IsAdmin">
     <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
-        <GenericList ItemsList="ItemList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
-                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems">
+        <GenericList @ref="Grid" ItemsList="UsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
+                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems"
+                     DeleteAllItems="DeleteAllUsers" SelectAllItems="SelectAllUsers" GridType="GridType.Edit">
             <TableHeader>
-                <HeaderRender Headers="ItemList?.Header" />
+                <HeaderRender Headers="UsersList?.Header" />
             </TableHeader>
             <ItemRender>
                 <UserRender Item="context" />
@@ -20,21 +21,21 @@
 </CascadingValue>
 
 @code{
-        GridList<User> ItemList;
+    GridList<User> UsersList;
 
-        Loading LoadingPanal;
-        Notification NotificationPanal;
+    Loading LoadingPanal;
+    Notification NotificationPanal;
 
     protected override async Task OnInitializedAsync()
     {
-        ItemList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+        UsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
     }
 
     async Task Action(int PageNumber, int SortBy, string FilterString = "")
     {
-        ItemList = null;
+        UsersList = null;
         StateHasChanged();
-        ItemList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
+        UsersList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
         StateHasChanged();
     }
 
@@ -49,8 +50,8 @@
         }
         else
         {
-            ItemList.Add(newUser);
-            ItemList.TotalCount++;
+            UsersList.Add(newUser);
+            UsersList.TotalCount++;
             StateHasChanged();
         }
     }
@@ -68,10 +69,10 @@
             }
             else
             {
-                int oldUserIndex = ItemList.FindIndex((x) => x.Id == userId);
+                int oldUserIndex = UsersList.FindIndex((x) => x.Id == userId);
                 if (oldUserIndex > -1)
                 {
-                    ItemList[oldUserIndex] = newUser;
+                    UsersList[oldUserIndex] = newUser;
                     StateHasChanged();
                 }
             }
@@ -93,18 +94,45 @@
         }
         else
         {
-            ItemList.Remove(User);
-            ItemList.TotalCount--;
-            if (ItemList.Count == 0 && ItemList.PagesCount > 1)
+            UsersList.Remove(User);
+            UsersList.TotalCount--;
+            if (UsersList.Count == 0 && UsersList.PagesCount > 1)
             {
-                int pageNumber = ItemList.CurrentPage == ItemList.PagesCount ? ItemList.PagesCount - 1 : ItemList.CurrentPage;
-                int sortBy = ItemList.SortedBy;
-                string filterstring = ItemList.FilterString;
-                ItemList = null;
+                int pageNumber = UsersList.CurrentPage == UsersList.PagesCount ? UsersList.PagesCount - 1 : UsersList.CurrentPage;
+                int sortBy = UsersList.SortedBy;
+                string filterstring = UsersList.FilterString;
+                UsersList = null;
                 StateHasChanged();
-                ItemList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
+                UsersList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
             }
             StateHasChanged();
+        }
+    }
+
+    async Task DeleteAllUsers(List<User> Users)
+    {
+        LoadingPanal.Show();
+        await Task.Delay(1000);
+        //string result = await Controller.DeleteAllUsers(Users.Select((x) => x.Id).ToList());
+        LoadingPanal.Hide();
+        if (!string.IsNullOrEmpty("" /*result*/))
+        {
+            //NotificationPanal.Show(NotificationType.Error, result, true, $"Can't delete '{User.Username}'!");
+        }
+        else
+        {
+            //ItemList.Remove(User);
+            //ItemList.TotalCount--;
+            //if (ItemList.Count == 0 && ItemList.PagesCount > 1)
+            //{
+            //    int pageNumber = ItemList.CurrentPage == ItemList.PagesCount ? ItemList.PagesCount - 1 : ItemList.CurrentPage;
+            //    int sortBy = ItemList.SortedBy;
+            //    string filterstring = ItemList.FilterString;
+            //    ItemList = null;
+            //    StateHasChanged();
+            //    ItemList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
+            //}
+            //StateHasChanged();
         }
     }
 
@@ -114,5 +142,16 @@
         Console.WriteLine($"Exporting as {type}");
         await Controller.ExportUsers(type);
         LoadingPanal.Hide();
+    }
+    GenericList<User> Grid;
+
+    List<int> SelectAllUsers(bool IsSelected)
+    {
+        List<int> result = new List<int>();
+        for (int i = 0; i < UsersList.Count; i++)
+        {
+            //Grid.SelectChange(UsersList[i].Id, IsSelected);
+        }
+        return result;
     }
 }
