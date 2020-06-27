@@ -12,7 +12,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <GenericList @ref="InModalGridObj" GridType="GridType.Select" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+                <GenericList @ref="InModalGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
                              ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction">
                     <TableHeader>
                         <HeaderRender Headers="InModalUserList?.Header" />
@@ -30,6 +30,20 @@
     </div>
 </div>
 
+<h3>Settings</h3>
+
+<div class="row mt-4">
+    <div class="col-12 col-md-6">
+        <div class="form-group">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input @bind="AllowMultSelect" type="checkbox" class="custom-control-input" id="is-admin">
+                <label class="custom-control-label" for="is-admin">Allow multi select</label>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
 <h3>In Modal Grid</h3>
 <div class="my-3">
     <button class="btn btn-primary" @onclick="ShowModal1">Open modal...</button>
@@ -45,7 +59,8 @@
 <hr />
 
 <h3>In autocomplete</h3>
-<AutoComplete @ref="AutoCompleteObj" Title="In autocomplete - Select users to use:" T="User" ActionFunc="AutoCompleteFilterList" ConvertToAutoCompleteItem="UserToAutoCompleteConverter" />
+<AutoComplete @ref="AutoCompleteObj" Title="In autocomplete - Select users to use:" T="User" ActionFunc="AutoCompleteFilterList"
+              ConvertToAutoCompleteItem="UserToAutoCompleteConverter" MultiSelect="AllowMultSelect"/>
 <h4>Selected Users <button class="btn btn-secondary" @onclick="GetAutoCompleteSelectedUsers">Read</button></h4>
 <p>
     @for (int i = 0; i < AutoCompleteSelectedUsers?.Count; i++)
@@ -56,7 +71,7 @@
 </p>
 <hr />
 
-<GenericList @ref="InlineGridObj" GridType="GridType.Select" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+<GenericList @ref="InlineGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
              ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction">
     <TableHeader>
         <HeaderRender Headers="InlineUsersList?.Header" />
@@ -76,6 +91,8 @@
 <hr />
 
 @code {
+    bool AllowMultSelect { get; set; } = true;
+
     GridList<User> InlineUsersList, InModalUserList;
 
     protected override async Task OnInitializedAsync()
