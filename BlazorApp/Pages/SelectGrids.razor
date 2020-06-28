@@ -13,7 +13,7 @@
             </div>
             <div class="modal-body">
                 <GenericList @ref="InModalGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
-                             ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction">
+                             ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction" DefaultSortBy="User.DefaultSortedBy">
                     <TableHeader>
                         <HeaderRender Headers="InModalUserList?.Header" />
                     </TableHeader>
@@ -72,7 +72,7 @@
 <hr />
 
 <GenericList @ref="InlineGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
-             ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction">
+             ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction" DefaultSortBy="User.DefaultSortedBy">
     <TableHeader>
         <HeaderRender Headers="InlineUsersList?.Header" />
     </TableHeader>
@@ -95,10 +95,10 @@
 
     GridList<User> InlineUsersList, InModalUserList;
 
-    protected override async Task OnInitializedAsync()
-    {
-        InlineUsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    InlineUsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+    //}
 
     async Task InlineAction(int PageNumber, int SortBy, string FilterString = "")
     {
@@ -128,7 +128,8 @@
     {
         Result = DialogResult.Undefiend;
         IsShown = true;
-        InModalUserList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+        InModalGridObj.Refresh();
+        //InModalUserList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
         StateHasChanged();
 
         while (Result == DialogResult.Undefiend)

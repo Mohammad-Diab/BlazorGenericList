@@ -60,4 +60,11 @@ namespace BlazorApp
         MultiSelect = 1,
         SingleSelect = 2,
     }
+
+    public enum SelectedStatus
+    {
+        None = 0,
+        Some = 1,
+        All = 2,
+    }
 }

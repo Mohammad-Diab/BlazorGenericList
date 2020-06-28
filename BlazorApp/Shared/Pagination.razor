@@ -3,10 +3,10 @@
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <li class="page-item @(CurrentPage < 2 ? "disabled" : "")">
-                <a class="page-link" href="#" tabindex="-1" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">Previous</a>
+                <button class="page-link" tabindex="-1" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">Previous</button>
             </li>
             <li class="page-item @(CurrentPage == 1 ? "active" : "")">
-                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(1); }">1</a>
+                <button class="page-link" @onclick="()=> { Parent.GoToPage(1); }">1</button>
             </li>
 
             @if (PagesCount < 10)
@@ -15,7 +15,7 @@
                 {
                     int index = i;
                     <li class="page-item @(CurrentPage == i ? "active" : "")">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(index); }">@i</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(index); }">@i</button>
                     </li>
                 }
             }
@@ -29,21 +29,21 @@
                 if (CurrentPage == PagesCount)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage - 2); }">@(CurrentPage - 2)</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage - 2); }">@(CurrentPage - 2)</button>
                     </li>
                 }
 
                 if (CurrentPage > 2)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">@(CurrentPage - 1)</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage - 1); }">@(CurrentPage - 1)</button>
                     </li>
                 }
 
                 if (CurrentPage != 1 && CurrentPage != PagesCount)
                 {
                     <li class="page-item active">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage); }">@CurrentPage</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage); }">@CurrentPage</button>
                     </li>
                 }
 
@@ -51,14 +51,14 @@
                 if (CurrentPage < PagesCount - 1)
                 {
                     <li class="page-item ">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">@(CurrentPage + 1)</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">@(CurrentPage + 1)</button>
                     </li>
                 }
 
                 if (CurrentPage == 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 2); }">@(CurrentPage + 2)</a>
+                        <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage + 2); }">@(CurrentPage + 2)</button>
                     </li>
                 }
 
@@ -70,10 +70,10 @@
             }
 
             <li class="page-item @(CurrentPage == PagesCount ? "active" : "")">
-                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(PagesCount); }">@PagesCount</a>
+                <button class="page-link" @onclick="()=> { Parent.GoToPage(PagesCount); }">@PagesCount</button>
             </li>
             <li class="page-item @(CurrentPage >= PagesCount ? "disabled" : "")">
-                <a class="page-link" href="#" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">Next</a>
+                <button class="page-link" @onclick="()=> { Parent.GoToPage(CurrentPage + 1); }">Next</button>
             </li>
         </ul>
     </nav>

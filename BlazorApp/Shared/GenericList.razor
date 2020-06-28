@@ -91,7 +91,9 @@ else
 
     [Parameter] public Func<string, Task> ExportItems { get; set; }
 
-    [Parameter] public Func<bool, List<int>> SelectAllItems { get; set; }
+    //[Parameter] public Func<bool, List<int>> SelectAllItems { get; set; }
+
+    [Parameter] public int DefaultSortBy { get; set; }
 
     string FilterString { get; set; } = "";
 
@@ -99,7 +101,18 @@ else
 
     int SortBy { get; set; } = 1;
 
-    int PagesCount { get; set; } = 0;
+    int PagesCount { get; set; } = 1;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Refresh();
+    }
+
+    public async void Refresh()
+    {
+        await RefreshGrid(1, DefaultSortBy, "");
+    }
 
     //public bool? SelectAllValue { get; set; } = false;
 
@@ -141,7 +154,7 @@ else
     ConfirmDialog ConfirmModal;
 
     List<DropdownItem> ExportDropdownItems = new List<DropdownItem>()
-{
+    {
         new DropdownItem("header","Human readable formats",DropdownType.Header),
         new DropdownItem("csv","CSV",DropdownType.Button),
         new DropdownItem("pdf","PDF",DropdownType.Button),
@@ -162,7 +175,6 @@ else
 
     public async void ShowEditModal(T Item, string ItemId, string itemName)
     {
-        //Console.WriteLine(SelectAllValue);
         var result = await Modal.ShowModal($"Edit '{itemName}'", DialogMode.Edit, ItemId, Item);
         if (result.ModalResult == DialogResult.Ok && result.NewItem != null)
         {
@@ -199,26 +211,26 @@ else
         {
             SortBy = -this.SortBy;
         }
-        await ActionFuncPrepare(CurrentPage, SortBy, FilterString);
+        await RefreshGrid(CurrentPage, SortBy, FilterString);
     }
 
     public async void GoToPage(int PageNumber)
     {
         PageNumber = PageNumber < 1 ? 1 : PageNumber;
         PageNumber = PageNumber > PagesCount ? PagesCount : PageNumber;
-        await ActionFuncPrepare(PageNumber, SortBy, FilterString);
+        await RefreshGrid(PageNumber, SortBy, FilterString);
     }
 
     public async Task Filter(string filterString)
     {
         FilterString = filterString;
-        await ActionFuncPrepare(1, SortBy, FilterString);
+        await RefreshGrid(1, SortBy, FilterString);
     }
 
-    public async Task ActionFuncPrepare(int PageNumber,int SortBy, string FilterString)
+    public async Task RefreshGrid(int PageNumber,int SortBy, string FilterString)
     {
         if (GridType == GridType.Edit)
-            SelectedItems.Clear();
+            SelectedItems?.Clear();
         await ActionFunc(PageNumber, SortBy, FilterString);
         this.SortBy = ItemsList.SortedBy;
         this.CurrentPage = ItemsList.CurrentPage;
@@ -235,6 +247,43 @@ else
         if (GridType != GridType.Edit)
             return SelectedItems.ToList();
         return null;
+    }
+
+    public void SelectAll(bool value)
+    {
+        if (value)
+        {
+            for (int i = 0; i < ItemsList.Count; i++)
+                SelectedItems.Add(ItemsList[i]);
+        }
+        else
+        {
+            for (int i = 0; i < ItemsList.Count; i++)
+                SelectedItems.Remove(ItemsList[i]);
+        }
+
+        StateHasChanged();
+    }
+
+    public SelectedStatus SelectStatus
+    {
+        get
+        {
+            if ((SelectedItems?.Count ?? 0) == 0 || (ItemsList?.Count ?? 0) == 0)
+                return SelectedStatus.None;
+            int selectedCount = 0;
+            for (int i = 0; i < ItemsList.Count; i++)
+            {
+                if (SelectedItems.Contains(ItemsList[i]))
+                    selectedCount++;
+            }
+            if (selectedCount == ItemsList.Count)
+                return SelectedStatus.All;
+            else if (selectedCount == 0)
+                return SelectedStatus.None;
+            else
+                return SelectedStatus.Some;
+        }
     }
 
     //public void SelectAll()
