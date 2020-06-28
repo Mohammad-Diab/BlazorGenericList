@@ -68,5 +68,32 @@ namespace BlazorApp
             }
         }
 
+        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<int> Ids)
+        {
+            await Task.Delay(1000);
+            string failedUsers = "";
+            for (int i = 0; i < Ids.Count; i++)
+            {
+                int userIndex = AllUsres.FindIndex((x) => x.Id == Ids[i]);
+                if (userIndex > -1)
+                {
+                    AllUsres.RemoveAt(userIndex);
+                }
+                else
+                {
+                    failedUsers += $"'{Ids[i]}', ";
+                }
+            }
+            if (string.IsNullOrEmpty(failedUsers))
+            {
+                return (true, "");
+            }
+            else
+            {
+                failedUsers = failedUsers.Substring(0, failedUsers.Length - 2);
+                return (false, $"Can't find user with these ids {failedUsers}!");
+            }
+        }
+
     }
 }

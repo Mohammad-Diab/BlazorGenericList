@@ -207,7 +207,7 @@
         Result = await ShowModal();
         if (Result == DialogResult.Cancel)
         {
-            InModalGridObj.SelectedItems.Clear();
+            InModalGridObj.ClearSelectedList();
         }
         InModalGridSelectedUsers = InModalGridObj.GetSelectedItems();
     }

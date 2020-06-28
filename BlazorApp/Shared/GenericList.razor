@@ -19,11 +19,14 @@
                 <span class="oi oi-plus align-middle"></span>
                 <span class="ml-1 align-middle">Add</span>
             </button>
+            if (SelectedItems?.Count > 1)
+            {
+                <button class="btn btn-danger" @onclick="ShowDeleteAllModal">
+                    <span class="oi oi-delete align-middle"></span>
+                    <span class="ml-1 align-middle">Delete @SelectedItems.Count items</span>
+                </button>
+            }
 
-            <button class="btn btn-danger" @onclick="ShowDeleteAllModal">
-                <span class="oi oi-delete align-middle"></span>
-                <span class="ml-1 align-middle">Delete selected items</span>
-            </button>
         }
 
         <Dropdown ButtonTitle="@("Export")" DropDownItems="ExportDropdownItems" OnSelect="Export" />
@@ -84,7 +87,7 @@ else
     [Parameter] public Func<string, T, Task> EditItem { get; set; }
     [Parameter] public Func<T, Task> DeleteItem { get; set; }
 
-    [Parameter] public Func<List<T>, Task> DeleteAllItems { get; set; }
+    [Parameter] public Func<List<T>, Task> DeleteMultiItems { get; set; }
 
     [Parameter] public Func<string, Task> ExportItems { get; set; }
 
@@ -92,11 +95,45 @@ else
 
     string FilterString { get; set; } = "";
 
+    int CurrentPage { get; set; } = 1;
+
+    int SortBy { get; set; } = 1;
+
+    int PagesCount { get; set; } = 0;
+
     //public bool? SelectAllValue { get; set; } = false;
 
     //HashSet<int> selectedId = new HashSet<int>();
 
-    public HashSet<T> SelectedItems = new HashSet<T>();
+    HashSet<T> SelectedItems = new HashSet<T>();
+
+    public void AddItemToSelectedList(T Item)
+    {
+        if (GridType == GridType.SingleSelect)
+        {
+            SelectedItems.Clear();
+        }
+        SelectedItems.Add(Item);
+        StateHasChanged();
+    }
+
+    public void RemoveItemFromSelectedList(T Item)
+    {
+        SelectedItems.Remove(Item);
+        StateHasChanged();
+    }
+
+    public void ClearSelectedList()
+    {
+        SelectedItems.Clear();
+        StateHasChanged();
+    }
+
+    public bool IsSelected(T Item)
+    {
+        return SelectedItems.Contains(Item);
+    }
+
 
     T ItemSample = default(T);
 
@@ -144,35 +181,38 @@ else
 
     public async void ShowDeleteAllModal()
     {
-        //SelectAllValue = null;
-        List<T> list = new List<T>();
-        DialogResult result = await ConfirmModal.ShowModal($"Deleting {450} items", $"Do you really want to delete '{450} items'?", ConfirmType.Delete);
+        if (SelectedItems.Count == 0)
+        {
+            return;
+        }
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {SelectedItems.Count} items", $"Do you really want to delete '{SelectedItems.Count} items'?", ConfirmType.Delete);
         if (result == DialogResult.Ok)
         {
-            await DeleteAllItems(list);
+            await DeleteMultiItems(SelectedItems.ToList());
+            ClearSelectedList();
         }
     }
 
     public async void Sort(int SortBy)
     {
-        if (SortBy == Math.Abs(ItemsList.SortedBy))
+        if (SortBy == Math.Abs(this.SortBy))
         {
-            SortBy = -ItemsList.SortedBy;
+            SortBy = -this.SortBy;
         }
-        await ActionFuncPrepare(ItemsList.CurrentPage, SortBy, FilterString);
+        await ActionFuncPrepare(CurrentPage, SortBy, FilterString);
     }
 
     public async void GoToPage(int PageNumber)
     {
         PageNumber = PageNumber < 1 ? 1 : PageNumber;
-        PageNumber = PageNumber > ItemsList.PagesCount ? ItemsList.PagesCount : PageNumber;
-        await ActionFuncPrepare(PageNumber, ItemsList.SortedBy, FilterString);
+        PageNumber = PageNumber > PagesCount ? PagesCount : PageNumber;
+        await ActionFuncPrepare(PageNumber, SortBy, FilterString);
     }
 
     public async Task Filter(string filterString)
     {
         FilterString = filterString;
-        await ActionFuncPrepare(1, ItemsList.SortedBy, FilterString);
+        await ActionFuncPrepare(1, SortBy, FilterString);
     }
 
     public async Task ActionFuncPrepare(int PageNumber,int SortBy, string FilterString)
@@ -180,6 +220,9 @@ else
         if (GridType == GridType.Edit)
             SelectedItems.Clear();
         await ActionFunc(PageNumber, SortBy, FilterString);
+        this.SortBy = ItemsList.SortedBy;
+        this.CurrentPage = ItemsList.CurrentPage;
+        PagesCount = ItemsList.PagesCount;
     }
 
     public async Task Export(string type)

@@ -1,7 +1,7 @@
 ﻿@using System.Timers;
 
 <div class="input-group">
-    <input class="form-control my-0 py-1" type="text" placeholder="Filter..." @bind-value="FilterString" aria-label="Search" @oninput="(arg) => { FilterString = (string)arg.Value; TextChanged(); }">
+    <input class="form-control my-0 py-1" type="text" placeholder="Filter..." @bind="FilterString" aria-label="Search" @bind:event="oninput">
     <div class="input-group-append">
         <span class="input-group-text">
             <i class="oi oi-magnifying-glass" aria-hidden="true"></i>
@@ -12,7 +12,22 @@
 @code {
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
-    string FilterString = "";
+    string filterString;
+    bool isSearching;
+
+    string FilterString {
+        get
+        {
+            return filterString;
+        }
+        set
+        {
+            filterString = value;
+            TextChanged();
+        }
+    }
+
+
     string lastFilterString = "";
     Timer timer;
 
@@ -31,10 +46,10 @@
 
     void TextChanged()
     {
-        timer.Stop();
+        timer?.Stop();
         if (lastFilterString?.ToLower() != FilterString?.ToLower())
         {
-            timer.Start();
+            timer?.Start();
         }
 
     }

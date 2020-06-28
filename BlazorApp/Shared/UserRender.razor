@@ -39,37 +39,30 @@
 </tr>
 
 @code {
-    [Parameter] public User Item { get; set; }
-    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
-    string Id;
+        [Parameter] public User Item { get; set; }
+        [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+        string Id;
     protected override void OnInitialized()
     {
         base.OnInitialized();
         Id = Guid.NewGuid().ToString();
-        isSelected = Parent.SelectedItems?.Contains(Item) ?? false;
     }
-
-    bool isSelected = false;
 
     bool IsSelected
     {
         get
         {
-            return isSelected;
+            return Parent.IsSelected(Item);
         }
         set
         {
-            isSelected = value;
-            //Item.IsSelected = isSelected;
-            if (isSelected)
+            if (value)
             {
-                if (Parent.GridType == GridType.SingleSelect)
-                    Parent.SelectedItems.Clear();
-                Parent.SelectedItems.Add(Item);
+                Parent.AddItemToSelectedList(Item);
             }
             else
             {
-                Parent.SelectedItems.Remove(Item);
+                Parent.RemoveItemFromSelectedList(Item);
             }
         }
     }
