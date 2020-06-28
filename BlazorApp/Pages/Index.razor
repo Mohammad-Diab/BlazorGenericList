@@ -9,7 +9,7 @@
     <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
         <GenericList @ref="Grid" ItemsList="UsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
                      ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems"
-                     DeleteMultiItems="DeleteSelectedUsers" SelectAllItems="SelectAllUsers" GridType="GridType.Edit">
+                     DeleteMultiItems="DeleteSelectedUsers" GridType="GridType.Edit" DefaultSortBy="User.DefaultSortedBy">
             <TableHeader>
                 <HeaderRender Headers="UsersList?.Header" />
             </TableHeader>
@@ -26,10 +26,10 @@
     Loading LoadingPanal;
     Notification NotificationPanal;
 
-    protected override async Task OnInitializedAsync()
-    {
-        UsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    UsersList = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy);
+    //}
 
     async Task Action(int PageNumber, int SortBy, string FilterString = "")
     {
@@ -148,13 +148,13 @@
     }
     GenericList<User> Grid;
 
-    List<int> SelectAllUsers(bool IsSelected)
-    {
-        List<int> result = new List<int>();
-        for (int i = 0; i < UsersList.Count; i++)
-        {
-            //Grid.SelectChange(UsersList[i].Id, IsSelected);
-        }
-        return result;
-    }
+    //List<int> SelectAllUsers(bool IsSelected)
+    //{
+    //    List<int> result = new List<int>();
+    //    for (int i = 0; i < UsersList.Count; i++)
+    //    {
+    //        //Grid.SelectChange(UsersList[i].Id, IsSelected);
+    //    }
+    //    return result;
+    //}
 }

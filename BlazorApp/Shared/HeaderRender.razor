@@ -6,9 +6,9 @@
         <th class="align-middle" scope="col" style="width: 40px;">
             @if ((Parent.EditAbility && Parent.GridType == GridType.Edit) || Parent.GridType == GridType.MultiSelect)
             {
-                <div title="Select all" class="custom-control custom-checkbox d-none">
-                    @*<input type="checkbox" class="custom-control-input @(Parent.SelectAllValue.HasValue ? (Parent.SelectAllValue.Value ? "checked" : "") : "indeterminate")" @onchange="(arg) => { Parent.SelectAllValue = (bool)arg.Value; Parent.SelectAll(); }" id="check-user-row-all" />*@
-                    <input type="checkbox" class="custom-control-input" id="check-all-@checkboxId" />
+                <div title="Select all" class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input @SelectState" @bind="IsChecked" id="check-all-@checkboxId" />
+                    @*<input type="checkbox" class="custom-control-input" id="check-all-@checkboxId" />*@
                     <label class="custom-control-label" for="check-all-@checkboxId"></label>
                 </div>
             }
@@ -41,5 +41,36 @@
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
     string checkboxId = Guid.NewGuid().ToString();
+
+    bool ischecked = false;
+    bool isReallyChecked = false;
+    bool IsChecked
+    {
+        get
+        {
+            return isReallyChecked;
+        }
+        set
+        {
+            isReallyChecked = !isReallyChecked;
+            Parent.SelectAll(isReallyChecked);
+        }
+    }
+
+    public string SelectState
+    {
+        get
+        {
+            SelectedStatus status = Parent.SelectStatus;
+            isReallyChecked = !(status == SelectedStatus.None || status == SelectedStatus.Some);
+            return status switch
+            {
+                SelectedStatus.None => "",
+                SelectedStatus.All => "checked",
+                SelectedStatus.Some => "indeterminate",
+                _ => ""
+            };
+        }
+    }
 
 }
