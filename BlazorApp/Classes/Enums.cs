@@ -58,6 +58,6 @@ namespace BlazorApp
     {
         Edit = 0,
         MultiSelect = 1,
-        SingleSelect = 1,
+        SingleSelect = 2,
     }
 }

@@ -162,4 +162,9 @@
         return SelectedItems;
     }
 
+    void Dispose()
+    {
+        hideListTimer?.Dispose();
+    }
+
 }

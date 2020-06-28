@@ -30,6 +30,12 @@ namespace BlazorApp
             return deleteResult.result ? "" : deleteResult.errorMessage;
         }
 
+        public async static Task<string> DeleteMultiUsers(List<int> Ids)
+        {
+            (bool result, string errorMessage) deleteResult = await Logic.DeleteMultiUsers(Ids);
+            return deleteResult.result ? "" : deleteResult.errorMessage;
+        }
+
         public async static Task ExportUsers(string type)
         {
             await Task.Delay(1000);

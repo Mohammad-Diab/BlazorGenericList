@@ -43,5 +43,10 @@ namespace BlazorApp
             return await Reader.DeleteUser(id);
         }
 
+        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<int> ids)
+        {
+            return await Reader.DeleteMultiUsers(ids);
+        }
+
     }
 }
