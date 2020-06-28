@@ -8,8 +8,8 @@
             {
                 <div title="Select all" class="custom-control custom-checkbox d-none">
                     @*<input type="checkbox" class="custom-control-input @(Parent.SelectAllValue.HasValue ? (Parent.SelectAllValue.Value ? "checked" : "") : "indeterminate")" @onchange="(arg) => { Parent.SelectAllValue = (bool)arg.Value; Parent.SelectAll(); }" id="check-user-row-all" />*@
-                    <input type="checkbox" class="custom-control-input" id="check-user-row-all" />
-                    <label class="custom-control-label" for="check-user-row-all"></label>
+                    <input type="checkbox" class="custom-control-input" id="check-all-@checkboxId" />
+                    <label class="custom-control-label" for="check-all-@checkboxId"></label>
                 </div>
             }
         </th>
@@ -39,5 +39,7 @@
 @code {
     [Parameter] public List<string> Headers { get; set; }
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+
+    string checkboxId = Guid.NewGuid().ToString();
 
 }
