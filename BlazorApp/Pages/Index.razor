@@ -141,9 +141,21 @@
 
     async Task ExportItems(string type)
     {
+        Console.WriteLine($"Exporting as {type}...");
         LoadingPanal.Show();
-        Console.WriteLine($"Exporting as {type}");
-        await Controller.ExportUsers(type);
+        int pageNumber = UsersList.CurrentPage;
+        int sortBy = UsersList.SortedBy;
+        string filterstring = UsersList.FilterString;
+        var result = await Controller.ExportUsers(type, pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
+        if (!string.IsNullOrEmpty(result.errorMessage))
+        {
+            NotificationPanal.Show(NotificationType.Error, result.errorMessage, true);
+        }
+        else
+        {
+            Console.WriteLine(result.result);
+            NotificationPanal.Show(NotificationType.Info, "Can't download files right now, result will be found in your browser 'Console'.", true);
+        }
         LoadingPanal.Hide();
     }
     GenericList<User> Grid;
