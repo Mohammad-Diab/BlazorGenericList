@@ -36,9 +36,11 @@ namespace BlazorApp
             return deleteResult.result ? "" : deleteResult.errorMessage;
         }
 
-        public async static Task ExportUsers(string type)
+        public async static Task<(string result, string errorMessage)> ExportUsers(string Type, int PageNumber, int ItemsInPage, int SortBy, string FilterString)
         {
-            await Task.Delay(1000);
+            await Task.Delay(200);
+            (string result, string errorMessage) result = await Logic.Export(Type, PageNumber, ItemsInPage, SortBy, FilterString);
+            return result;
         }
 
     }

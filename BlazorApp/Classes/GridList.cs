@@ -41,5 +41,12 @@ namespace BlazorApp
             PagesCount = (int)Math.Ceiling((ItemsCount + 0.0) / ItemsPerPage);
             TotalCount = ItemsCount;
         }
+
+        internal List<T> GetList()
+        {
+            List<T> result = new List<T>();
+            result.AddRange(this);
+            return result;
+        }
     }
 }
