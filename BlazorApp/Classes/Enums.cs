@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace BlazorApp
 {
-    public enum DialogMode
+
+    public enum GridType
     {
-        Add = 0,
-        Edit = 1
+        Edit = 0,
+        MultiSelect = 1,
+        SingleSelect = 2,
     }
 
     public enum PropertyType
@@ -20,25 +22,11 @@ namespace BlazorApp
         Date = 4
     }
 
-    public enum ModalConfirmButton
+    public enum SelectedStatus
     {
-        Default = 0,
-        Add = 1,
-        Edit = 2,
-        Delete = 3
-    }
-
-    public enum DialogResult
-    {
-        Undefiend = 0,
-        Ok = 1,
-        Cancel = 2
-    }
-
-    public enum LoadingContentType
-    {
-        Grid = 1,
-        SelectGrid = 2
+        None = 0,
+        Some = 1,
+        All = 2,
     }
 
     public enum NotificationType
@@ -56,18 +44,33 @@ namespace BlazorApp
         Divider = 2
     }
 
-    public enum GridType
+    public enum LoadingContentType
     {
-        Edit = 0,
-        MultiSelect = 1,
-        SingleSelect = 2,
+        Grid = 1,
+        SelectGrid = 2
     }
 
-    public enum SelectedStatus
+    #region Modals
+
+    public enum DialogMode
     {
-        None = 0,
-        Some = 1,
-        All = 2,
+        Add = 0,
+        Edit = 1
+    }
+
+    public enum ModalConfirmButton
+    {
+        Default = 0,
+        Add = 1,
+        Edit = 2,
+        Delete = 3
+    }
+
+    public enum DialogResult
+    {
+        Undefiend = 0,
+        Ok = 1,
+        Cancel = 2
     }
 
     public enum ModalShowAnimation
@@ -76,5 +79,7 @@ namespace BlazorApp
         BounceIn = 1,
         BounceInDown = 2
     }
+
+    #endregion
 
 }

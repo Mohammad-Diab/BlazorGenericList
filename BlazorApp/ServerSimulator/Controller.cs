@@ -62,7 +62,7 @@ namespace BlazorApp
         /// <param name="id">Target user's id.</param>
         /// <param name="NewUser">object represents the new user information.</param>
         /// <returns>An empty string when everything goes right, otherwise return the error message.</returns>
-        public async static Task<string> EditUser(int id, User NewUser)
+        public async static Task<string> EditUser(string id, User NewUser)
         {
             // Represents the requert send delay.
             await Task.Delay(RandomNumber.Next(20));
@@ -81,7 +81,7 @@ namespace BlazorApp
         /// </summary>
         /// <param name="id">Target user's id.</param>
         /// <returns>An empty string when everything goes right, otherwise return the error message.</returns>
-        public async static Task<string> DeleteUser(int id)
+        public async static Task<string> DeleteUser(string id)
         {
             // Represents the requert send delay.
             await Task.Delay(RandomNumber.Next(20));
@@ -100,7 +100,7 @@ namespace BlazorApp
         /// </summary>
         /// <param name="Ids">List of users' ids to delete.</param>
         /// <returns>An empty string when everything goes right, otherwise return the error message.</returns>
-        public async static Task<string> DeleteMultiUsers(List<int> Ids)
+        public async static Task<string> DeleteMultiUsers(List<string> Ids)
         {
             // Represents the requert send delay.
             await Task.Delay(RandomNumber.Next(20));

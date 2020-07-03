@@ -79,7 +79,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal async static Task<(bool result, string errorMessage)> EditUser(int id, User newUser)
+        internal async static Task<(bool result, string errorMessage)> EditUser(string id, User newUser)
         {
             // Passing the request to data store.
             return await Reader.EditUser(id, newUser);
@@ -94,7 +94,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal async static Task<(bool result, string errorMessage)> DeleteUser(int id)
+        internal async static Task<(bool result, string errorMessage)> DeleteUser(string id)
         {
             // Passing the request to data store.
             return await Reader.DeleteUser(id);
@@ -109,7 +109,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<int> ids)
+        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<string> ids)
         {
             // Passing the request to data store.
             return await Reader.DeleteMultiUsers(ids);

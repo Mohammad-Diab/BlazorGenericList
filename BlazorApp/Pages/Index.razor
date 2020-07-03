@@ -58,10 +58,10 @@
 
     async Task EditUser(string id, User newUser)
     {
-        if (int.TryParse(id, out int userId))
+        if (!string.IsNullOrEmpty(id))
         {
             LoadingPanal.Show();
-            string result = await Controller.EditUser(userId, newUser);
+            string result = await Controller.EditUser(id, newUser);
             LoadingPanal.Hide();
             if (!string.IsNullOrEmpty(result))
             {
@@ -69,7 +69,7 @@
             }
             else
             {
-                int oldUserIndex = UsersList.FindIndex((x) => x.Id == userId);
+                int oldUserIndex = UsersList.FindIndex((x) => x.Id == id);
                 if (oldUserIndex > -1)
                 {
                     UsersList[oldUserIndex] = newUser;
