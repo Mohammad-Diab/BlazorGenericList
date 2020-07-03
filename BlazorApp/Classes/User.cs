@@ -110,5 +110,14 @@ namespace BlazorApp
             Phone = phone;
             Email = email;
         }
+
+        internal void Update(User newUser)
+        {
+            Username = newUser.Username;
+            FullName = newUser.FullName;
+            Birthday = newUser.Birthday;
+            Phone = newUser.Phone;
+            Email = newUser.Email;
+        }
     }
 }
