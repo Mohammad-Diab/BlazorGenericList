@@ -1,0 +1,116 @@
+﻿<div class="modal @(IsShown ? "show d-block" : "")" tabindex="-1" role="dialog">
+    <div style="z-index: unset;" class="modal-backdrop @(IsShown ? "show" : "d-none")" @onclick="FocusModal"></div>
+    <div class="modal-dialog @ModalClasses animate__animated @AnimateClassName" role="document">
+        <div class="modal-content animate__animated animate__fast @FocusClassName">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ModalTitle</h5>
+                <button type="button" class="close" @onclick="Cancel" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Close</button>
+                <button type="button" class="btn @MainButtonClass" @onclick="Confirm">@MainButtonText</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string ModalClasses { get; set; }
+    [Parameter] public ModalShowAnimation ShowAnimation { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    string ModalTitle { get; set; }
+    ModalConfirmButton ConfirmType { get; set; }
+
+    bool IsShown = false;
+    string AnimateClassName = "animate__bounceIn animate__fast";
+    string animationName = "animate__bounceIn";
+    string MainButtonClass = "btn-success";
+    string MainButtonText = "Ok";
+    string FocusClassName = "";
+
+    DialogResult Result = DialogResult.Undefiend;
+
+    bool IsAnimating = false;
+
+    public async Task<DialogResult> ShowModal(string ModalTitle, ModalConfirmButton Mode)
+    {
+        animationName = ShowAnimation switch
+        {
+            ModalShowAnimation.BounceIn => "animate__bounceIn",
+            ModalShowAnimation.BounceInDown => "animate__bounceInDown",
+            _ => "animate__bounceIn"
+        };
+        AnimateClassName = $"{animationName} animate__fast";
+        ConfirmType = Mode;
+        this.ModalTitle = ModalTitle;
+
+        Result = DialogResult.Undefiend;
+
+        switch (Mode)
+        {
+            case ModalConfirmButton.Add:
+                MainButtonClass = "btn-primary";
+                MainButtonText = "Add";
+                break;
+            case ModalConfirmButton.Edit:
+                MainButtonClass = "btn-primary";
+                MainButtonText = "Edit";
+                break;
+            case ModalConfirmButton.Delete:
+                MainButtonClass = "btn-danger";
+                MainButtonText = "Delete";
+                break;
+            default:
+                MainButtonClass = "btn-success";
+                MainButtonText = "Ok";
+                break;
+        }
+
+        IsShown = true;
+        StateHasChanged();
+
+        while (Result == DialogResult.Undefiend)
+        {
+            await Task.Delay(50);
+        }
+
+        return Result;
+    }
+
+    public async Task FocusModal()
+    {
+        if (IsAnimating)
+            return;
+        IsAnimating = true;
+        FocusClassName = "animate__tada";
+        await Task.Delay(600);
+        FocusClassName = "";
+        IsAnimating = false;
+    }
+
+    public async Task CloseModal()
+    {
+        AnimateClassName = "animate__bounceOut animate__faster";
+        await Task.Delay(500);
+        IsShown = false;
+        AnimateClassName = $"{animationName} animate__fast";
+    }
+
+    public async Task Confirm()
+    {
+        Result = DialogResult.Ok;
+        await CloseModal();
+    }
+
+    public async Task Cancel()
+    {
+        Result = DialogResult.Cancel;
+        await CloseModal();
+    }
+}

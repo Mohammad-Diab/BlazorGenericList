@@ -1,73 +1,48 @@
 ﻿@typeparam T
 
-<div class="modal @(IsShown ? "show d-block" : "")" tabindex="-1" role="dialog">
-    <div style="z-index: unset;" class="modal-backdrop @(IsShown ? "show" : "d-none")" @onclick="FocusModal"></div>
-    <div class="modal-dialog modal-lg @animateClassName animate__animated" role="document">
-        <div class="modal-content animate__animated animate__fast @FocusClassName">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@ModalTitle</h5>
-                <button type="button" class="close" @onclick="Cancel" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger d-none" role="alert">
-                    This is a primary alert—check it out!
-                </div>
-                @if (Properties != null)
-                {
-                    @for (int i = 0; i < Properties.Count; i += 2)
-                    {
-                        int index = i;
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <DataInput Item="Properties[index]"></DataInput>
-                            </div>
+<Modal @ref="ModalRef" ModalClasses="modal-lg" ShowAnimation="ModalShowAnimation.BounceInDown">
+        <div class="alert alert-danger d-none" role="alert">
+            This is a primary alert—check it out!
+        </div>
+        @if (Properties != null)
+        {
+            @for (int i = 0; i < Properties.Count; i += 2)
+            {
+                int index = i;
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <DataInput Item="Properties[index]"></DataInput>
+                    </div>
 
-                            @if (index + 1 < Properties.Count)
-                            {
-                                <div class="col-md-6 mb-3">
-                                    <DataInput Item="Properties[index + 1]"></DataInput>
-                                </div>
-                            }
+                    @if (index + 1 < Properties.Count)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <DataInput Item="Properties[index + 1]"></DataInput>
                         </div>
                     }
-                }
+                </div>
+            }
+        }
+</Modal>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="Cancel">Close</button>
-                <button type="button" class="btn btn-primary" @onclick="Confirm">@ConfirmButtonText</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 @code {
 
     [Parameter] public List<Property> Properties { get; set; }
     [Parameter] public T ItemType { get; set; }
-    string ModalTitle { get; set; }
     DialogMode DialogMode { get; set; }
-
-    DialogResult ModalResult{ get; set; } = DialogResult.Undefiend;
+    Modal ModalRef;
 
     T Item { get; set; }
 
-    bool IsShown = false;
-    string animateClassName = "animate__bounceInDown animate__fast";
-    string ConfirmButtonText = "Add";
-
-    bool IsAnimating = false;
-    string FocusClassName = "";
-
     public async Task<(DialogResult ModalResult, T NewItem)> ShowModal(string ModalTitle, DialogMode Mode, string ItemId = null, T Item = default(T))
     {
-        this.ModalTitle = ModalTitle;
         DialogMode = Mode;
         this.Item = Item;
+        ModalConfirmButton mode = ModalConfirmButton.Add;
         if (Mode == DialogMode.Edit)
         {
+            mode = ModalConfirmButton.Edit;
             for (int i = 0; i < Properties.Count; i++)
             {
                 var prop = typeof(T).GetProperty(Properties[i].Key);
@@ -82,15 +57,9 @@
                 Properties[i].DefaultValue = "";
             }
         }
-        ConfirmButtonText = (Mode == DialogMode.Add ? "Add" : "Edit");
-        ModalResult = DialogResult.Undefiend;
-        IsShown = true;
-        StateHasChanged();
 
-        while (ModalResult == DialogResult.Undefiend)
-        {
-            await Task.Delay(50);
-        }
+        var ModalResult = await ModalRef.ShowModal(ModalTitle, mode);
+
         T updatedItem = default(T);
 
         if (ModalResult == DialogResult.Ok)
@@ -104,13 +73,6 @@
                 param.Add(Properties[i].DefaultValue);
             }
 
-            //var param = (IdList.Union(from prop in Properties select prop.DefaultValue)).ToArray<object>();
-
-            for (int i = 0; i < param.Count; i++)
-            {
-                Console.WriteLine($"{i} = {param[i]}");
-            }
-
             updatedItem = (T)Activator.CreateInstance(typeof(T), param.ToArray());
         }
 
@@ -118,38 +80,4 @@
 
     }
 
-    async Task CloseModal()
-    {
-        animateClassName = "animate__bounceOut animate__faster";
-        await Task.Delay(400);
-        IsShown = false;
-        animateClassName = "animate__bounceInDown animate__fast";
-    }
-
-    async Task Cancel()
-    {
-        ModalResult = DialogResult.Cancel;
-        await CloseModal();
-    }
-
-    async Task Confirm()
-    {
-        ModalResult = DialogResult.Ok;
-        await CloseModal();
-        //for (int i = 0; i < Properties.Count; i++)
-        //{
-        //    Console.WriteLine($"{Properties[i].Key} = {Properties[i].DefaultValue}");
-        //}
-    }
-
-    public async Task FocusModal()
-    {
-        if (IsAnimating)
-            return;
-        IsAnimating = true;
-        FocusClassName = "animate__tada";
-        await Task.Delay(600);
-        FocusClassName = "";
-        IsAnimating = false;
-    }
 }

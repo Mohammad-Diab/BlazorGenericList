@@ -184,7 +184,7 @@ else
 
     public async void ShowDeleteModal(T Item, string itemName)
     {
-        DialogResult result = await ConfirmModal.ShowModal($"Deleting {itemName}", $"Do you really want to delete '{itemName}'?", ConfirmType.Delete);
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {itemName}", $"Do you really want to delete '{itemName}'?", ModalConfirmButton.Delete);
         if (result == DialogResult.Ok)
         {
             await DeleteItem(Item);
@@ -197,7 +197,7 @@ else
         {
             return;
         }
-        DialogResult result = await ConfirmModal.ShowModal($"Deleting {SelectedItems.Count} items", $"Do you really want to delete '{SelectedItems.Count} items'?", ConfirmType.Delete);
+        DialogResult result = await ConfirmModal.ShowModal($"Deleting {SelectedItems.Count} items", $"Do you really want to delete '{SelectedItems.Count} items'?", ModalConfirmButton.Delete);
         if (result == DialogResult.Ok)
         {
             await DeleteMultiItems(SelectedItems.ToList());
