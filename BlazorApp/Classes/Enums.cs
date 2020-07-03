@@ -20,10 +20,12 @@ namespace BlazorApp
         Date = 4
     }
 
-    public enum ConfirmType
+    public enum ModalConfirmButton
     {
         Default = 0,
-        Delete = 1
+        Add = 1,
+        Edit = 2,
+        Delete = 3
     }
 
     public enum DialogResult
@@ -67,4 +69,12 @@ namespace BlazorApp
         Some = 1,
         All = 2,
     }
+
+    public enum ModalShowAnimation
+    {
+        None = 0,
+        BounceIn = 1,
+        BounceInDown = 2
+    }
+
 }
