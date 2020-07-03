@@ -19,10 +19,10 @@ namespace BlazorApp
         /// Return a GridList of User that matches the conditions.
         /// </summary>
         /// <param name="PageNumber">Requested page number.</param>
-        /// <param name="ItemsInPage">Number of item per a page.</param>
+        /// <param name="ItemsInPage">Number of items per a page.</param>
         /// <param name="SortBy">An integer represent column id to sort the list based on, negative number means inverted order.</param>
         /// <param name="FilterString">A string to filter the result. This field is Optional, default value is an empty string.</param>
-        /// <returns>List of User that matches the conditions</returns>
+        /// <returns>List of User that matches the conditions.</returns>
         public async static Task<GridList<User>> GetUsers(int PageNumber, int ItemsInPage, int SortBy, string FilterString = "")
         {
             // Represents the requert send delay.
