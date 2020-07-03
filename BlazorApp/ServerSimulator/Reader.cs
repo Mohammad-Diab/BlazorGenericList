@@ -86,7 +86,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal static async Task<(bool result, string errorMessage)> EditUser(int id, User newUser)
+        internal static async Task<(bool result, string errorMessage)> EditUser(string id, User newUser)
         {
             // Simulate a data store write latency.
             await Task.Delay(RandomNumber.Next(50));
@@ -115,7 +115,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal async static Task<(bool result, string errorMessage)> DeleteUser(int id)
+        internal async static Task<(bool result, string errorMessage)> DeleteUser(string id)
         {
             // Simulate a data store write latency.
             await Task.Delay(RandomNumber.Next(50));
@@ -144,7 +144,7 @@ namespace BlazorApp
         /// <para>Fisrt is result: represent result statue.</para>
         /// <para>Second is errorMessage: represent error message when something went wrong.</para>
         /// </returns>
-        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<int> Ids)
+        internal async static Task<(bool result, string errorMessage)> DeleteMultiUsers(List<string> Ids)
         {
             // Simulate a data store write latency.
             await Task.Delay(RandomNumber.Next(50 * Ids.Count));
