@@ -1,4 +1,4 @@
-﻿<div class="alert alert-@GetNotificationTypeClass() @(IsDismissible ? "alert-dismissible" : "") @(isVisible ? "show" : "d-none") animate__animated animate__faster @animationClass" role="alert">
+﻿<div class="alert alert-@GetNotificationTypeClass() @(IsDismissible ? "alert-dismissible" : "") @(isShown ? "show" : "d-none") animate__animated animate__faster @animationClass" role="alert">
     <div>
         @if (!string.IsNullOrEmpty(Title))
         {
