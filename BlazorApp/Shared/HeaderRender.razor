@@ -8,7 +8,6 @@
             {
                 <div title="Select all" class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input @SelectState" @bind="IsChecked" id="check-all-@checkboxId" />
-                    @*<input type="checkbox" class="custom-control-input" id="check-all-@checkboxId" />*@
                     <label class="custom-control-label" for="check-all-@checkboxId"></label>
                 </div>
             }
@@ -37,32 +36,53 @@
     </tr>
 }
 @code {
+    /// <summary>
+    /// List of headers of the grid.
+    /// </summary>
     [Parameter] public List<string> Headers { get; set; }
+
+    /// <summary>
+    ///  Reference to the parent Grid.
+    /// </summary>
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
+    // HTML static Id for the select all checkbox.
     string checkboxId = Guid.NewGuid().ToString();
 
-    bool ischecked = false;
-    bool isReallyChecked = false;
+    bool isChecked = false;
+
+    /// <summary>
+    /// Select all checkbox value whether it's selected or not. This allows us to do some actions when text changed and binded.
+    /// </summary>
     bool IsChecked
     {
         get
         {
-            return isReallyChecked;
+            return isChecked;
         }
         set
         {
-            isReallyChecked = !isReallyChecked;
-            Parent.SelectAll(isReallyChecked);
+            isChecked = !isChecked;
+
+            // Call parent select all function.
+            Parent.SelectAll(isChecked);
         }
     }
 
+    /// <summary>
+    /// Get checkbox classes depend on select state.
+    /// </summary>
     public string SelectState
     {
         get
         {
+            // Read select state from parent.
             SelectedStatus status = Parent.SelectStatus;
-            isReallyChecked = !(status == SelectedStatus.None || status == SelectedStatus.Some);
+
+            // Set isChecked value depend on parent state.
+            isChecked = !(status == SelectedStatus.None || status == SelectedStatus.Some);
+
+            // return checkbox classes.
             return status switch
             {
                 SelectedStatus.None => "",
