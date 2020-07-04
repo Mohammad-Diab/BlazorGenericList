@@ -25,12 +25,12 @@
 
 
 <div class="@(isShown ? "" : "d-none") list-group position-absolute" style="min-width: 16rem; z-index: 999;" @onfocus="() => { isOut = false; }" @onblur="InputBlur">
-    @if ((GridList?.Count ?? 0) > 0)
+    @if ((AutoCompleteList?.Count ?? 0) > 0)
     {
-            @for (int i = 0; i < GridList?.Count; i++)
+            @for (int i = 0; i < AutoCompleteList?.Count; i++)
             {
                 int index = i;
-                <button type="button" class="list-group-item list-group-item-action" @onclick="() => AddSelectedItem(GridList[index])" @onfocusout="InputBlur" @onfocus="() => { isOut = false; }">@GridList[i].Value</button>
+                <button type="button" class="list-group-item list-group-item-action" @onclick="() => AddSelectedItem(AutoCompleteList[index])" @onfocusout="InputBlur" @onfocus="() => { isOut = false; }">@AutoCompleteList[i].Value</button>
             }
     }
     else
@@ -39,132 +39,3 @@
     }
 
 </div>
-
-@code {
-    [Parameter] public string Title { get; set; }
-    [Parameter] public bool MultiSelect { get; set; }
-    [Parameter] public Func<string, Task<List<T>>> ActionFunc { get; set; }
-    [Parameter] public Func<T, AutoCompleteItem> ConvertToAutoCompleteItem { get; set; }
-
-    List<AutoCompleteItem> SelectedItems;
-    List<AutoCompleteItem> GridList;
-
-    bool isShown = false;
-    bool isLoading = false;
-    string lastFilterString, filterString;
-    Timer filteringTimer;
-
-    string textInputValue = "";
-    public string TextInputValue
-    {
-        get
-        {
-            return textInputValue;
-        }
-        set
-        {
-            GridList = null;
-            textInputValue = value;
-            filterString = value;
-            isShown = false;
-            filteringTimer.Stop();
-            if (filterString.Length > 2)
-            {
-                filteringTimer.Start();
-            }
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        SelectedItems = new List<AutoCompleteItem>();
-        filteringTimer = new Timer(500);
-        filteringTimer.AutoReset = false;
-        filteringTimer.Elapsed += Filter;
-
-        hideListTimer = new Timer(50);
-        hideListTimer.AutoReset = false;
-        hideListTimer.Elapsed += (object sender, ElapsedEventArgs args) => {
-            if (isOut)
-            {
-                isShown = false;
-                StateHasChanged();
-            }
-        };
-    }
-
-    async void Filter(object sender, ElapsedEventArgs args)
-    {
-        if (filterString != lastFilterString)
-        {
-            lastFilterString = filterString;
-            filterString = "";
-            isLoading = true;
-            StateHasChanged();
-            var ItemList = await ActionFunc(lastFilterString);
-            GridList = ItemList.Select((item) => ConvertToAutoCompleteItem(item)).ToList();
-            isLoading = false;
-        }
-        isShown = true;
-        StateHasChanged();
-    }
-
-    void AddSelectedItem(AutoCompleteItem item)
-    {
-        TextInputValue = "";
-        isShown = false;
-        if (!MultiSelect)
-            SelectedItems.Clear();
-
-        if (SelectedItems.Find((it) => it.Key == item.Key) == null)
-            SelectedItems.Add(item);
-    }
-
-    void RemoveItem(AutoCompleteItem item)
-    {
-        SelectedItems.Remove(item);
-    }
-
-    bool isOut = false;
-
-    Timer hideListTimer;
-    void InputBlur()
-    {
-        if (isShown)
-        {
-            isOut = true;
-            hideListTimer.Start();
-        }
-    }
-
-    async void ShowList()
-    {
-        if (GridList == null)
-        {
-            if (string.IsNullOrEmpty(TextInputValue) || TextInputValue.Length > 2)
-            {
-                isLoading = true;
-                var ItemList = await ActionFunc(TextInputValue);
-                GridList = ItemList.Select((item) => ConvertToAutoCompleteItem(item)).ToList();
-                isLoading = false;
-                isShown = true;
-                StateHasChanged();
-            }
-        }
-        else
-        {
-            isShown = true;
-        }
-    }
-
-    public List<AutoCompleteItem> GetSelectedItems()
-    {
-        return SelectedItems;
-    }
-
-    void Dispose()
-    {
-        hideListTimer?.Dispose();
-    }
-
-}
