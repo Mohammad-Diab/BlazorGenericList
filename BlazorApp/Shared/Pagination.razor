@@ -81,7 +81,18 @@
 
 
 @code {
+    /// <summary>
+    /// Total pages count.
+    /// </summary>
     [Parameter] public int PagesCount { get; set; }
+
+    /// <summary>
+    /// Selected page number.
+    /// </summary>
     [Parameter] public int CurrentPage { get; set; }
+
+    /// <summary>
+    /// Reference to the parent Grid.
+    /// </summary>
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 }

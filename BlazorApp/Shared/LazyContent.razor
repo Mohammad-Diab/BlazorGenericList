@@ -32,7 +32,18 @@
     <div class="position-absolute slider slide-animation"></div>
 </div>
 @code {
+    /// <summary>
+    /// Type of original Item.
+    /// </summary>
     [Parameter] public LoadingContentType Type { get; set; }
+
+    /// <summary>
+    /// Columns count in original grid.
+    /// </summary>
     [Parameter] public int ColumnsCount { get; set; }
+
+    /// <summary>
+    /// Number of items per a page, to determine how many rows' placeholder should be exists.
+    /// </summary>
     [Parameter] public int ItemsPerPage { get; set; }
 }
