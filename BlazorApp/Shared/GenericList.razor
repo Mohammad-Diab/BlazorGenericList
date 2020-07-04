@@ -7,7 +7,7 @@
 
 @if (EditAbility && GridType == GridType.Edit)
 {
-    <UpdateModal @ref="Modal" ItemType="ItemSample" Properties="ItemsList?.ItemProperties"></UpdateModal>
+    <UpdateModal T="T" @ref="Modal" Properties="ItemsList?.ItemProperties"></UpdateModal>
     <ConfirmDialog @ref="ConfirmModal"></ConfirmDialog>
 }
 <div class="mt-1 mb-3 @(GridType == GridType.Edit ? "" : "text-right")" style="overflow: visible;">
@@ -146,9 +146,6 @@ else
     {
         return SelectedItems.Contains(Item);
     }
-
-
-    T ItemSample = default(T);
 
     UpdateModal<T> Modal;
     ConfirmDialog ConfirmModal;
