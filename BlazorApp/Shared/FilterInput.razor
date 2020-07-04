@@ -10,11 +10,17 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Reference to the parent Grid.
+    /// </summary>
     [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
 
-    string filterString;
-    bool isSearching;
+    // Current and previous filtering string.
+    string filterString, lastFilterString = "";
 
+    /// <summary>
+    /// Current value in the input text. This allows us to do some actions when text changed and binded.
+    /// </summary>
     string FilterString {
         get
         {
@@ -23,39 +29,50 @@
         set
         {
             filterString = value;
+
+            // Trigger text changed event.
             TextChanged();
         }
     }
 
+    // Timer to hold back request to server by adding a few milliseconds of delay.
+    Timer filterTimer;
 
-    string lastFilterString = "";
-    Timer timer;
-
+    /// <summary>
+    /// Function triggers after Initializing the component.
+    /// </summary>
     protected override void OnInitialized()
     {
-        timer = new Timer();
-        timer.Interval = 300;
-        timer.AutoReset = false;
-        timer.Elapsed += TimerElapsed;
+        // Initializ filter timer.
+        filterTimer = new Timer();
+        filterTimer.Interval = 300;
+        filterTimer.AutoReset = false;
+        filterTimer.Elapsed += (object sender, ElapsedEventArgs args) => {
+            Search();
+        };
     }
 
-    async void TimerElapsed(object sender, ElapsedEventArgs args)
-    {
-        await Search();
-    }
-
+    /// <summary>
+    /// Start filtering's timer.
+    /// </summary>
     void TextChanged()
     {
-        timer?.Stop();
+        // Stop previous Timer.
+        filterTimer?.Stop();
+
+        // Start the timer if text typed fulfill the conditions.
         if (lastFilterString?.ToLower() != FilterString?.ToLower())
         {
-            timer?.Start();
+            filterTimer?.Start();
         }
-
     }
 
-    async Task Search()
+    /// <summary>
+    /// Triggered after changing text and timer ticking.
+    /// </summary>
+    async void Search()
     {
+        // If current text matches previous text just keep previous result.
         if (lastFilterString?.ToLower() != FilterString?.ToLower())
         {
             lastFilterString = FilterString;
@@ -63,8 +80,12 @@
         }
     }
 
+    /// <summary>
+    /// Event triggers when component being dispose.
+    /// </summary>
     void Dispose()
     {
-        timer?.Dispose();
+        // Dispose timers after the component being dispose.
+        filterTimer?.Dispose();
     }
 }

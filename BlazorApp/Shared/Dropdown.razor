@@ -27,22 +27,43 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Button Trigger Content.
+    /// </summary>
     [Parameter] public string ButtonTitle { get; set; }
+
+    /// <summary>
+    /// List of Item in dropdown menu.
+    /// </summary>
     [Parameter] public List<DropdownItem> DropDownItems { get; set; }
+
+    /// <summary>
+    /// A fuction to trigger when seleted item.
+    /// </summary>
     [Parameter] public EventCallback<string> OnSelect { get; set; }
 
+    // Is Dropdown list is visible or not.
     bool isShown = false;
 
+    /// <summary>
+    /// Toggle Dropdown menu visibility.
+    /// </summary>
     void Toggle()
     {
         isShown = !isShown;
     }
 
+    /// <summary>
+    /// Show Dropdown menu.
+    /// </summary>
     void Show()
     {
         isShown = true;
     }
 
+    /// <summary>
+    /// Hide Dropdown menu.
+    /// </summary>
     void Hide()
     {
         isShown = false;
