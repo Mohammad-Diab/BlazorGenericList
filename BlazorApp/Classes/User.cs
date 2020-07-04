@@ -99,6 +99,9 @@ namespace BlazorApp
             Id = Guid.NewGuid().ToString();
         }
 
+        /// <summary>
+        /// A required function to create an instance of current class using activator in Add mode. It should has all properties except for Id.
+        /// </summary>
         public User(string username, string fullName, string birthday, string email, string phone)
         {
             Id = Guid.NewGuid().ToString();
@@ -112,7 +115,7 @@ namespace BlazorApp
         }
 
         /// <summary>
-        /// A required function to create an instance of current class using activator. It should has all properties.
+        /// A required function to create an instance of current class using activator in update mode. It should has all properties.
         /// </summary>
         public User(string id, string username, string fullName, string birthday, string email, string phone)
         {
