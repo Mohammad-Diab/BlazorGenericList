@@ -148,6 +148,9 @@ namespace BlazorApp.Shared
             // Hide the modal.
             IsShown = false;
 
+            // Force layout to refreshing component.
+            StateHasChanged();
+
             // Reset open's animation class.
             AnimateClassName = $"{animationName} animate__fast";
         }
