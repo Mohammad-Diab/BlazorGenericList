@@ -1,5 +1,5 @@
 ﻿
-<div class="loading-overlay justify-content-center @(isVisible ? "" : "d-none")">
+<div class="loading-overlay justify-content-center @(isShown ? "" : "d-none")">
     <div style="border: solid black 1px;" class="m-auto bg-dark text-light px-5 py-3">
         <div class="spinner-border spinner-border-xl mr-3 align-middle" style="width: 2rem; height: 2rem;">
             <span class="sr-only">Working on it...</span>
@@ -9,23 +9,43 @@
 </div>
 
 @code {
-    bool isVisible = false;
+
+    // Is Loading panal is visible or not.
+    bool isShown = false;
+
+    // How many Loading panal showed
     int showCount = 0;
 
+    /// <summary>
+    /// Show loading panal.
+    /// </summary>
     public void Show()
     {
-        isVisible = true;
+        // Show loading panal.
+        isShown = true;
+
+        // Increase showed times.
         showCount++;
+
+        // Force layout to refreshing component.
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Hide loading panal.
+    /// </summary>
     public void Hide()
     {
+        // Decrese showed times.
         showCount--;
+
+        // Showed count must not be less than zero.
         showCount = showCount < 1 ? 0 : showCount;
+
+        // If Showed count reach zero, hide loading panel.
         if (showCount == 0)
         {
-            isVisible = false;
+            isShown = false;
             StateHasChanged();
         }
     }

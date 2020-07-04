@@ -39,15 +39,22 @@
 </tr>
 
 @code {
-        [Parameter] public User Item { get; set; }
-        [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
-        string Id;
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Id = Guid.NewGuid().ToString();
-    }
+    /// <summary>
+    /// User Item to be rendered in the grid.
+    /// </summary>
+    [Parameter] public User Item { get; set; }
 
+    /// <summary>
+    /// Reference to the parent Grid.
+    /// </summary>
+    [CascadingParameter(Name = "UpdateModal")] public GenericList<User> Parent { get; set; }
+
+    // HTML Static It of this field.
+    string Id = Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// Current user checkbox value whether it's selected or not. This allows us to do some actions when text changed and binded.
+    /// </summary>
     bool IsSelected
     {
         get
@@ -58,44 +65,14 @@
         {
             if (value)
             {
+                // Add current Item to parent Grid's Selected List.
                 Parent.AddItemToSelectedList(Item);
             }
             else
             {
+                // Remove current Item from parent Grid's Selected List.
                 Parent.RemoveItemFromSelectedList(Item);
             }
         }
     }
-
-    void ToggleCheckbox(bool? isChecked = null)
-    {
-        Console.WriteLine("Hid");
-        if(isChecked.HasValue)
-        {
-            //Item.IsSelected = isChecked.Value;
-        }
-        else
-        {
-            //Item.IsSelected = !Item.IsSelected;
-            //Parent.SelectChange(Item.Id, Item.IsSelected);
-        }
-    }
-
-    //[Parameter] public EventCallback<User> DeleteUser { get; set; }
-    //[Parameter] public Action<User, string, string> EditUser { get; set; }
-
-    //[CascadingParameter(Name = "UpdateModal")] public UpdateModal<User> EditModal { get; set; }
-    //[CascadingParameter(Name = "ConfirmDialog")] public ConfirmDialog ConfirmModal { get; set; }
-
-
-    //async void ShowEditModal()
-    //{
-    //    await EditModal.ShowModal($"Edit '{Item.Username}'", DialogMode.Edit, Item.Id.ToString(), Item);
-    //}
-
-    //async Task DeleteItem()
-    //{
-    //    DialogResult result = await ConfirmModal.ShowModal($"Deleting {Item.FullName}", $"Do you really want to delete '{Item.FullName}'", ConfirmType.Delete);
-    //    Console.WriteLine(result.ToString());
-    //}
 }
