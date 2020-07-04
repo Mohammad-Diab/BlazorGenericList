@@ -1,5 +1,8 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+/****************************************************/
+/******************* Basic Styles *******************/
+
 html, body {
     font-family: "segoe ui light", 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -137,6 +140,13 @@ app, .main-container {
     top: 0.5rem;
 }
 
+/*************** End of Basic Styles ***************/
+/****************************************************/
+
+
+/****************************************************/
+/****************** Splash  Screen ******************/
+
 .spalsh-screen {
     position: fixed;
     display: flex;
@@ -217,20 +227,12 @@ app, .main-container {
     }
 }
 
-.page-footer {
-    line-height: 48px;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: #f7f7f7;
-    border-top: 1px solid #d6d5d5;
-    font-family: "segoe ui light";
-}
+/*************** End of Splash Screen ***************/
+/****************************************************/
 
-.lonely-text {
-    font-size: 3.33vh;
-    letter-spacing: 0.4vh;
-}
+
+/****************************************************/
+/*************** Lazy Content  Styles ***************/
 
 table.loading {
     table-layout: fixed;
@@ -242,7 +244,7 @@ table.loading {
 }
 
 .loading th div,
-.loading td div{
+.loading td div {
     background-color: lightgray;
     border-radius: 8px;
     width: 80%;
@@ -265,9 +267,22 @@ table.loading {
     left: -200px;
 }
 
-.slide-animation {
-    animation: slide-animation 2s ease-in-out infinite;
+.page-footer {
+    line-height: 48px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #f7f7f7;
+    border-top: 1px solid #d6d5d5;
+    font-family: "segoe ui light";
 }
+
+/************ End of Lazy Content Styles ************/
+/****************************************************/
+
+
+/****************************************************/
+/****************** Custom  Inputs ******************/
 
 .custom-checkbox .custom-control-input.indeterminate ~ .custom-control-label::before {
     border-color: #007bff;
@@ -294,7 +309,6 @@ table.loading {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
 }
 
-
 .custom-control-input.checked ~ .custom-control-label::before {
     color: #fff;
     border-color: #007bff;
@@ -305,26 +319,12 @@ table.loading {
     border-color: #80bdff;
 }
 
-@keyframes slide-animation {
-    from {
-        left: -200px;
-    }
+/*************** End of Custom Inputs ***************/
+/****************************************************/
 
-    to {
-        left: calc(100% + 200px)
-    }
-}
 
-.loading-overlay {
-    display: flex;
-    z-index: 1500;
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-}
+/****************************************************/
+/**************** AutoComplete  Menu ****************/
 
 .autoComplete{
     cursor: text;
@@ -347,19 +347,32 @@ table.loading {
     color: #fff;
 }
 
-/*.alert {
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
-    position: absolute;
-    left: 0;
+/************* End of AutoComplete Menu *************/
+/****************************************************/
+
+.lonely-text {
+    font-size: 3.33vh;
+    letter-spacing: 0.4vh;
+}
+
+.loading-overlay {
+    display: flex;
+    z-index: 1500;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
     right: 0;
-    z-index: 99;
-}*/
+    background-color: rgba(0, 0, 0, 0.4);
+}
 
 .modal-backdrop {
     width: 100%;
     height: 100%;
 }
+
+/****************************************************/
+/****************** Dropdown  Menu ******************/
 
 .dropdown-menu {
     box-shadow: 0 0 4px 2px rgba(0,0,0,0.28);
@@ -372,6 +385,13 @@ table.loading {
 .dropdown-toggle {
     line-height: 1.6em;
 }
+
+/*************** End of Dropdown Menu ***************/
+/****************************************************/
+
+
+/****************************************************/
+/******************* Media  Query *******************/
 
 @media (min-width: 576px) {
     .modal-dialog-centered {
@@ -414,10 +434,6 @@ table.loading {
         top: 0;
     }
 
-/*    .alert {
-        margin-left: 2rem;
-    }*/
-
     .main > div {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
@@ -439,3 +455,6 @@ table.loading {
         letter-spacing: 4px;
     }
 }
+
+/****************************************************/
+/**************** End of Media Query ****************/
