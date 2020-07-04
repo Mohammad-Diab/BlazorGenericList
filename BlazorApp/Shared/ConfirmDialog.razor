@@ -4,9 +4,23 @@
 
 @code {
 
+    /// <summary>
+    /// Reference of Modal component.
+    /// </summary>
     Modal ModalRef;
+
+    /// <summary>
+    /// Confirm modal message.
+    /// </summary>
     string ModalContent { get; set; }
 
+    /// <summary>
+    /// Show confirm modal.
+    /// </summary>
+    /// <param name="ModalTitle">Modal title.</param>
+    /// <param name="ModalContent">Modal message.</param>
+    /// <param name="Mode">Modal mode.</param>
+    /// <returns>Modal result: Confirm or Cancel.</returns>
     public async Task<DialogResult> ShowModal(string ModalTitle,string ModalContent, ModalConfirmButton Mode)
     {
         this.ModalContent = ModalContent;
