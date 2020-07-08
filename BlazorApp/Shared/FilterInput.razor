@@ -70,13 +70,13 @@
     /// <summary>
     /// Triggered after changing text and timer ticking.
     /// </summary>
-    async void Search()
+    void Search()
     {
         // If current text matches previous text just keep previous result.
         if (lastFilterString?.ToLower() != FilterString?.ToLower())
         {
             lastFilterString = FilterString;
-            await Parent.Filter(FilterString);
+            Parent.Filter(FilterString);
         }
     }
 
