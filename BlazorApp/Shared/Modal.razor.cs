@@ -132,6 +132,9 @@ namespace BlazorApp.Shared
 
             // Clear animation Register.
             IsAnimating = false;
+
+            // Force layout to refreshing component again.
+            StateHasChanged();
         }
 
         /// <summary>
