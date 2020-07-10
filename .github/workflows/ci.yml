@@ -21,7 +21,7 @@ jobs:
         # Generate the website
         - name: Publish
           run: |
-            cp wwwroot/index.html wwwroot/404.html
+            cp BlazorApp/wwwroot/index.html BlazorApp/wwwroot/404.html
             dotnet publish BlazorApp/BlazorApp.csproj --configuration Release
 
         # Publish the website
