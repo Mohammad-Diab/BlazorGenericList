@@ -2,7 +2,7 @@
 @inject SettingsService AppSettings
 
 <Modal @ref="ModalRef" ShowAnimation="ModalShowAnimation.BounceIn" ModalClasses=" modal-xl modal-dialog-centered">
-    <GenericList @ref="InModalGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+    <GenericList @ref="InModalGridObj" GridType="AllowMultiSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
                  ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction" DefaultSortBy="User.DefaultSortedBy">
         <TableHeader>
             <HeaderRender Headers="InModalUserList?.Header" />
@@ -19,7 +19,7 @@
     <div class="col-12 col-md-6">
         <div class="form-group">
             <div class="custom-control custom-checkbox mr-sm-2">
-                <input @bind="AllowMultSelect" type="checkbox" class="custom-control-input" id="is-admin">
+                <input @bind="AllowMultiSelect" type="checkbox" class="custom-control-input" id="is-admin">
                 <label class="custom-control-label" for="is-admin">Allow multi select</label>
             </div>
         </div>
@@ -43,7 +43,7 @@
 
 <h3>In autocomplete</h3>
 <AutoComplete @ref="AutoCompleteObj" Title="In autocomplete - Select users to use:" T="User" ActionFunc="AutoCompleteFilterList"
-              ConvertToAutoCompleteItem="UserToAutoCompleteConverter" MultiSelect="AllowMultSelect"/>
+              ConvertToAutoCompleteItem="UserToAutoCompleteConverter" MultiSelect="AllowMultiSelect"/>
 <h4>Selected Users <button class="btn btn-secondary" @onclick="GetAutoCompleteSelectedUsers">Read</button></h4>
 <p>
     @for (int i = 0; i < AutoCompleteSelectedUsers?.Count; i++)
@@ -54,7 +54,7 @@
 </p>
 <hr />
 
-<GenericList @ref="InlineGridObj" GridType="AllowMultSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+<GenericList @ref="InlineGridObj" GridType="AllowMultiSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
              ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction" DefaultSortBy="User.DefaultSortedBy">
     <TableHeader>
         <HeaderRender Headers="InlineUsersList?.Header" />
@@ -72,69 +72,3 @@
     }
 </p>
 <hr />
-
-@code {
-    bool AllowMultSelect { get; set; } = true;
-
-    GridList<User> InlineUsersList, InModalUserList;
-
-    Modal ModalRef;
-
-    async Task InlineAction(int PageNumber, int SortBy, string FilterString = "")
-    {
-        InlineUsersList = null;
-        StateHasChanged();
-        InlineUsersList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
-        StateHasChanged();
-    }
-
-    async Task InModalAction(int PageNumber, int SortBy, string FilterString = "")
-    {
-        InModalUserList = null;
-        StateHasChanged();
-        InModalUserList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
-        StateHasChanged();
-    }
-
-
-    AutoComplete<User> AutoCompleteObj;
-    List<AutoCompleteItem> AutoCompleteSelectedUsers;
-
-    async Task<List<User>> AutoCompleteFilterList(string FilterString)
-    {
-        List<User> result = new List<User>();
-        result = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy, FilterString);
-        return result;
-    }
-
-    AutoCompleteItem UserToAutoCompleteConverter(User User)
-    {
-        return new AutoCompleteItem() { Key = User.Id.ToString(), Value = User.FullName };
-    }
-
-    void GetAutoCompleteSelectedUsers()
-    {
-        AutoCompleteSelectedUsers = AutoCompleteObj.GetSelectedItems();
-    }
-
-    GenericList<User> InlineGridObj;
-    List<User> InlineGridSelectedUsers;
-    void GetInlineGridSelectedUsers()
-    {
-        InlineGridSelectedUsers = InlineGridObj.GetSelectedItems();
-    }
-
-    GenericList<User> InModalGridObj;
-    List<User> InModalGridSelectedUsers;
-
-    public async void ShowModal()
-    {
-        var Result = await ModalRef.ShowModal("In modal Grid", ModalConfirmButton.Default);
-        if (Result == DialogResult.Cancel)
-        {
-            InModalGridObj.ClearSelectedList();
-        }
-        InModalGridSelectedUsers = InModalGridObj.GetSelectedItems();
-        StateHasChanged();
-    }
-}
