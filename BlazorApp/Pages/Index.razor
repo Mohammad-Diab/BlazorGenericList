@@ -1,21 +1,74 @@
 ﻿@page "/"
 @inject SettingsService AppSettings
 
-<Notification @ref="NotificationPanal" Timeout="5000" />
-<Loading @ref="LoadingPanal" />
-<h1>Hello, Blazor 🙂.</h1>
-<hr class="my-3" />
-<CascadingValue Name="EditAbility" Value="AppSettings.IsAdmin">
-    <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
-        <GenericList ItemsList="UsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
-                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems"
-                     DeleteMultiItems="DeleteSelectedUsers" GridType="GridType.Edit" DefaultSortBy="User.DefaultSortedBy">
-            <TableHeader>
-                <HeaderRender Headers="UsersList?.Header" />
-            </TableHeader>
-            <ItemRender>
-                <UserRender Item="context" />
-            </ItemRender>
-        </GenericList>
-    </CascadingValue>
-</CascadingValue>
+<Modal @ref="ModalRef" ShowAnimation="ModalShowAnimation.BounceIn" ModalClasses=" modal-xl modal-dialog-centered">
+    <GenericList @ref="InModalGridObj" GridType="AllowMultiSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InModalUserList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+                 ItemsPerPage="AppSettings.ItemsPerPage" Title="In modal Grid - Select users to use:" ActionFunc="InModalAction" DefaultSortBy="User.DefaultSortedBy">
+        <TableHeader>
+            <HeaderRender Headers="InModalUserList?.Header" />
+        </TableHeader>
+        <ItemRender>
+            <UserRender Item="context" />
+        </ItemRender>
+    </GenericList>
+</Modal>
+
+<h3>Settings</h3>
+
+<div class="row mt-4">
+    <div class="col-12 col-md-6">
+        <div class="form-group">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input @bind="AllowMultiSelect" type="checkbox" class="custom-control-input" id="is-admin">
+                <label class="custom-control-label" for="is-admin">Allow multi select</label>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<h3>In Modal Grid</h3>
+<div class="my-3">
+    <button class="btn btn-primary" @onclick="ShowModal">Open modal...</button>
+</div>
+<h4>Selected Users</h4>
+<p>
+    @for (int i = 0; i < InModalGridSelectedUsers?.Count; i++)
+    {
+        @($"{InModalGridSelectedUsers[i].Id} : {InModalGridSelectedUsers[i].FullName}")
+        <br />
+    }
+</p>
+<hr />
+
+<h3>In autocomplete</h3>
+<AutoComplete @ref="AutoCompleteObj" Title="In autocomplete - Select users to use:" T="User" ActionFunc="AutoCompleteFilterList"
+              ConvertToAutoCompleteItem="UserToAutoCompleteConverter" MultiSelect="AllowMultiSelect" />
+<h4>Selected Users <button class="btn btn-secondary" @onclick="GetAutoCompleteSelectedUsers">Read</button></h4>
+<p>
+    @for (int i = 0; i < AutoCompleteSelectedUsers?.Count; i++)
+    {
+        @($"{AutoCompleteSelectedUsers[i].Key} : {AutoCompleteSelectedUsers[i].Value}")
+        <br />
+    }
+</p>
+<hr />
+
+<GenericList @ref="InlineGridObj" GridType="AllowMultiSelect ? GridType.MultiSelect : GridType.SingleSelect" ItemsList="InlineUsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)"
+             ItemsPerPage="AppSettings.ItemsPerPage" Title="Inline Grid - Select users to use:" ActionFunc="InlineAction" DefaultSortBy="User.DefaultSortedBy">
+    <TableHeader>
+        <HeaderRender Headers="InlineUsersList?.Header" />
+    </TableHeader>
+    <ItemRender>
+        <UserRender Item="context" />
+    </ItemRender>
+</GenericList>
+<h4>Selected Users <button class="btn btn-secondary" @onclick="GetInlineGridSelectedUsers">Read</button></h4>
+<p>
+    @for (int i = 0; i < InlineGridSelectedUsers?.Count; i++)
+    {
+        @($"{InlineGridSelectedUsers[i].Id} : {InlineGridSelectedUsers[i].FullName}")
+        <br />
+    }
+</p>
+<hr />

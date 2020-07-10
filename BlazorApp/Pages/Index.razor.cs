@@ -8,252 +8,132 @@ namespace BlazorApp.Pages
 {
     public partial class Index
     {
-        // List of users that used for rendering in the Grid.
-        GridList<User> UsersList;
+        /// <summary>
+        /// Property to bind allow multi select checkbox.
+        /// </summary>
+        bool AllowMultiSelect { get; set; } = true;
 
-        // References to LoadingPanal component.
-        Loading LoadingPanal;
+        // List of user to use in "Inline Grid" and "In Modal Grid".
+        GridList<User> InlineUsersList, InModalUserList;
 
-        // References to NotificationPanal component.
-        Notification NotificationPanal;
+        // References to both Grid Lists.
+        GenericList<User> InlineGridObj, InModalGridObj;
 
         /// <summary>
-        /// Main function to get, sort and filter the grid list.
+        /// Main function to get, sort and filter the grid list. This function will be used by "Inline Grid".
         /// </summary>
         /// <param name="PageNumber">Requested page number.</param>
         /// <param name="SortBy">An integer represent column id to sort the list based on, negative number means inverted order.</param>
         /// <param name="FilterString">A string to filter the result. This field is Optional, default value is an empty string.</param>
-        async Task Action(int PageNumber, int SortBy, string FilterString = "")
+        async Task InlineAction(int PageNumber, int SortBy, string FilterString = "")
         {
-            // Assign UsersList to null, this will make the layout displaying lazy content component.
-            UsersList = null;
+            // Assign InlineUsersList to null, this will make the layout displaying lazy content component.
+            InlineUsersList = null;
 
             // Force layout to refreshing component again.
             StateHasChanged();
 
             // Get result from server.
-            UsersList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
+            InlineUsersList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
 
             // Force layout to refreshing component again.
             StateHasChanged();
         }
 
+        // List of selected users in "Inline Grid".
+        List<User> InlineGridSelectedUsers;
+
         /// <summary>
-        /// Add user function.
+        /// Function to get selected users from "Inline Grid".
         /// </summary>
-        /// <param name="newUser">User to be added.</param>
-        async Task AddUser(User newUser)
+        void GetInlineGridSelectedUsers()
         {
-            // Show loading panal.
-            LoadingPanal.Show();
-
-            // Send the request and wait for result.
-            string result = await Controller.AddUser(newUser);
-
-            // Hide loading panal.
-            LoadingPanal.Hide();
-
-            if (!string.IsNullOrEmpty(result))
-            {
-                // If the result is not empty the somthing went wrong in the request, So display the error.
-                NotificationPanal.Show(NotificationType.Error, result, true, $"Can't add '{newUser.Username}'!");
-            }
-            else
-            {
-                // If everything goes right, Add the user to list.
-                UsersList.Add(newUser);
-
-                // Increase total users count.
-                UsersList.TotalCount++;
-
-                // Force layout to refreshing component again.
-                StateHasChanged();
-            }
+            InlineGridSelectedUsers = InlineGridObj.GetSelectedItems();
         }
 
         /// <summary>
-        /// Edit user function.
+        /// Main function to get, sort and filter the grid list. This function will be used by "In Modal Grid".
         /// </summary>
-        /// <param name="id">Desiring User's Id.</param>
-        /// <param name="newUser">New user object.</param>
-        async Task EditUser(string id, User newUser)
+        /// <param name="PageNumber">Requested page number.</param>
+        /// <param name="SortBy">An integer represent column id to sort the list based on, negative number means inverted order.</param>
+        /// <param name="FilterString">A string to filter the result. This field is Optional, default value is an empty string.</param>
+        async Task InModalAction(int PageNumber, int SortBy, string FilterString = "")
         {
-            // check if id is empty.
-            if (!string.IsNullOrEmpty(id))
-            {
-                // Show loading panal.
-                LoadingPanal.Show();
+            // Assign InModalUserList to null, this will make the layout displaying lazy content component.
+            InModalUserList = null;
 
-                // Send the request and wait for result.
-                string result = await Controller.EditUser(id, newUser);
+            // Force layout to refreshing component again.
+            StateHasChanged();
 
-                // Hide loading panal.
-                LoadingPanal.Hide();
-                if (!string.IsNullOrEmpty(result))
-                {
-                    // If the result is not empty the somthing went wrong in the request, So display the error.
-                    NotificationPanal.Show(NotificationType.Error, result, true, $"Can't Edit '{newUser.Username}'!");
-                }
-                else
-                {
-                    // If everything goes right, Replace old user object with the new one..
-                    int oldUserIndex = UsersList.FindIndex((x) => x.Id == id);
-                    if (oldUserIndex > -1)
-                    {
-                        UsersList[oldUserIndex] = newUser;
-
-                        // Force layout to refreshing component again.
-                        StateHasChanged();
-                    }
-                }
-            }
-            else
-            {
-                NotificationPanal.Show(NotificationType.Error, "Invalid Id format!", true);
-            }
-        }
-
-        /// <summary>
-        /// Delete user function.
-        /// </summary>
-        /// <param name="User">User to delete.</param>
-        async Task DeleteUser(User User)
-        {
-            // Show loading panal.
-            LoadingPanal.Show();
-
-            // Send the request and wait for result.
-            string result = await Controller.DeleteUser(User.Id);
-
-            // Hide loading panal.
-            LoadingPanal.Hide();
-
-            if (!string.IsNullOrEmpty(result))
-            {
-                // If the result is not empty the somthing went wrong in the request, So display the error.
-                NotificationPanal.Show(NotificationType.Error, result, true, $"Can't delete '{User.Username}'!");
-            }
-            else
-            {
-                // If everything goes right, Delete the user from local list.
-                UsersList.Remove(User);
-
-                //Decrease total users count.
-                UsersList.TotalCount--;
-
-                // If current user is the last user in the list and there is other pages, request other page from the server.
-                if (UsersList.Count == 0 && UsersList.PagesCount > 1)
-                {
-                    // New page number will be same as current page number except if the current page is last page then we should take previous one.
-                    int pageNumber = UsersList.CurrentPage == UsersList.PagesCount ? UsersList.PagesCount - 1 : UsersList.CurrentPage;
-
-                    // Keep other properties as they are.
-                    int sortBy = UsersList.SortedBy;
-                    string filterstring = UsersList.FilterString;
-
-                    // Assign UsersList to null, this will make the layout displaying lazy content component.
-                    UsersList = null;
-
-                    // Force layout to refreshing component again.
-                    StateHasChanged();
-
-                    // Get result from server.
-                    UsersList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
-                }
-            }
+            // Get result from server.
+            InModalUserList = await Controller.GetUsers(PageNumber, AppSettings.ItemsPerPage, SortBy, FilterString);
 
             // Force layout to refreshing component again.
             StateHasChanged();
         }
 
+        // Reference to "In Modal Grid" modal.
+        Modal ModalRef;
+
+        // List of selected users in "In Modal Grid".
+        List<User> InModalGridSelectedUsers;
+
         /// <summary>
-        /// Delete multi users at once.
+        /// Show the modal and get selected users if confirmed;
         /// </summary>
-        /// <param name="Users">List of users to delete.</param>
-        async Task DeleteSelectedUsers(List<User> Users)
+        public async void ShowModal()
         {
-            // Show loading panal.
-            LoadingPanal.Show();
+            // Show the modal and get the result.
+            var Result = await ModalRef.ShowModal("In modal Grid", ModalConfirmButton.Default);
 
-            // Send the request and wait for result.
-            string result = await Controller.DeleteMultiUsers(Users.Select((x) => x.Id).ToList());
-
-            // Hide loading panal.
-            LoadingPanal.Hide();
-
-            if (!string.IsNullOrEmpty(result))
+            // empty seleced users list if modal has canceled.
+            if (Result == DialogResult.Cancel)
             {
-                // If the result is not empty the somthing went wrong in the request, So display the error.
-                NotificationPanal.Show(NotificationType.Error, result, true, $"Can't delete '{Users.Count}' Users!");
+                InModalGridObj.ClearSelectedList();
             }
-            else
-            {
-                // If everything goes right, Remove users from the list.
-                for (int i = 0; i < Users.Count; i++)
-                {
-                    UsersList.Remove(Users[i]);
-                }
 
-                // Decrease total users by the number of deleted users.
-                UsersList.TotalCount-= Users.Count;
+            // Get selected users.
+            InModalGridSelectedUsers = InModalGridObj.GetSelectedItems();
 
-                // If current page is empty and there is other pages, request other page from the server.
-                if (UsersList.Count == 0 && UsersList.PagesCount > 1)
-                {
-                    // New page number will be same as current page number except if the current page is last page then we should take previous one.
-                    int pageNumber = UsersList.CurrentPage == UsersList.PagesCount ? UsersList.PagesCount - 1 : UsersList.CurrentPage;
+            // Force layout to refreshing component again.
+            StateHasChanged();
+        }
 
-                    // Keep other properties as they are.
-                    int sortBy = UsersList.SortedBy;
-                    string filterstring = UsersList.FilterString;
+        // Reference to "AutoComplete" component.
+        AutoComplete<User> AutoCompleteObj;
 
-                    // Assign UsersList to null, this will make the layout displaying lazy content component.
-                    UsersList = null;
+        // To view selected users in AutoComplete.
+        List<AutoCompleteItem> AutoCompleteSelectedUsers;
 
-                    // Force layout to refreshing component again.
-                    StateHasChanged();
+        /// <summary>
+        /// Main function to get and filter autoComplete list.
+        /// </summary>
+        /// <param name="FilterString">A string to filter the result.</param>
+        /// <returns>A filtered user list.</returns>
+        async Task<List<User>> AutoCompleteFilterList(string FilterString)
+        {
+            // Get result from server.
+            List<User> result = await Controller.GetUsers(1, AppSettings.ItemsPerPage, User.DefaultSortedBy, FilterString);
 
-                    // Get result from server.
-                    UsersList = await Controller.GetUsers(pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
-                }
-                // Force layout to refreshing component again.
-                StateHasChanged();
-            }
+            return result;
         }
 
         /// <summary>
-        /// Exporting a users' page to a file.
+        /// Function to convert from User to AutoCompleteItem object.
         /// </summary>
-        /// <param name="type">Desiring file type, available types is JSON, XML, CSV and PDF.</param>
-        async Task ExportItems(string type)
+        /// <param name="User">User to be converted.</param>
+        /// <returns>AutoCompleteItem that represent the result.</returns>
+        AutoCompleteItem UserToAutoCompleteConverter(User User)
         {
-            // Show loading panal.
-            LoadingPanal.Show();
+            return new AutoCompleteItem() { Key = User.Id.ToString(), Value = User.FullName };
+        }
 
-            // Read current page properties.
-            int pageNumber = UsersList.CurrentPage;
-            int sortBy = UsersList.SortedBy;
-            string filterstring = UsersList.FilterString;
-
-            // Send the request and wait for result.
-            var result = await Controller.ExportUsers(type, pageNumber, AppSettings.ItemsPerPage, sortBy, filterstring);
-
-            if (!string.IsNullOrEmpty(result.errorMessage))
-            {
-                // If errorMessage is not empty the somthing went wrong in the request, So display the error.
-                NotificationPanal.Show(NotificationType.Error, result.errorMessage, true);
-            }
-            else
-            {
-                // If everything goes right, Display the result in the console (for now). Downloading files will be available in next updates.
-                Console.WriteLine(result.result);
-
-                // Show a notification that the result will not be downloaded, and it'll be in the Browser 'Console'.
-                NotificationPanal.Show(NotificationType.Info, "Can't download files right now, result will be found in your browser 'Console'.", true);
-            }
-
-            // Hide loading panal.
-            LoadingPanal.Hide();
+        /// <summary>
+        /// Function to get selected users from autocomplete.
+        /// </summary>
+        void GetAutoCompleteSelectedUsers()
+        {
+            AutoCompleteSelectedUsers = AutoCompleteObj.GetSelectedItems();
         }
     }
 }

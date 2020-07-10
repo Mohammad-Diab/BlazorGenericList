@@ -1,0 +1,19 @@
+﻿@page "/editgrid"
+@inject SettingsService AppSettings
+
+<Notification @ref="NotificationPanal" Timeout="5000" />
+<Loading @ref="LoadingPanal" />
+<CascadingValue Name="EditAbility" Value="AppSettings.IsAdmin">
+    <CascadingValue Name="LoadingPanal" Value="LoadingPanal">
+        <GenericList ItemsList="UsersList" GridColumnsCount="@(User.Headers?.Count ?? 5)" ItemsPerPage="AppSettings.ItemsPerPage"
+                     ActionFunc="Action" AddItem="AddUser" EditItem="EditUser" DeleteItem="DeleteUser" ExportItems="ExportItems"
+                     DeleteMultiItems="DeleteSelectedUsers" GridType="GridType.Edit" DefaultSortBy="User.DefaultSortedBy">
+            <TableHeader>
+                <HeaderRender Headers="UsersList?.Header" />
+            </TableHeader>
+            <ItemRender>
+                <UserRender Item="context" />
+            </ItemRender>
+        </GenericList>
+    </CascadingValue>
+</CascadingValue>
