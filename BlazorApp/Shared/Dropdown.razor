@@ -10,7 +10,7 @@
             switch (DropDownItems[i].Type)
             {
                 case DropdownType.Button:
-                    <a class="dropdown-item" href="#" @onclick="() => { Hide(); OnSelect.InvokeAsync(DropDownItems[index].Key); }">@DropDownItems[i].Value</a>
+                    <a class="dropdown-item" @onclick="() => { Hide(); OnSelect.InvokeAsync(DropDownItems[index].Key); }">@DropDownItems[i].Value</a>
                     break;
                 case DropdownType.Header:
                     <h6 class="dropdown-header">@DropDownItems[i].Value</h6>
@@ -19,7 +19,7 @@
                     <div class="dropdown-divider"></div>
                     break;
                 default:
-                    <a class="dropdown-item" href="#">@DropDownItems[i].Value</a>
+                    <a class="dropdown-item">@DropDownItems[i].Value</a>
                     break;
             }
         }
