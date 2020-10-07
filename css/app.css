@@ -1,0 +1,477 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+/****************************************************/
+/******************* Basic Styles *******************/
+
+html, body {
+    font-family: "segoe ui light", 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+app, .main-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-row {
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.main {
+    flex: 1;
+    position: relative;
+}
+
+.main .top-row {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+}
+
+.main .top-row > a, .main .top-row .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+}
+
+.main .top-row a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.sidebar .top-row {
+    background-color: rgba(0,0,0,0.4);
+}
+
+.sidebar .navbar-brand {
+    font-size: 1.1rem;
+}
+
+.sidebar .oi {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.sidebar .nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+.sidebar .nav-item:first-of-type {
+    padding-top: 1rem;
+}
+
+.sidebar .nav-item:last-of-type {
+    padding-bottom: 1rem;
+}
+
+.sidebar .nav-item a {
+    color: #d7d7d7;
+    border-radius: 4px;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    line-height: 3rem;
+}
+
+.sidebar .nav-item a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.sidebar .nav-item a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+/*************** End of Basic Styles ***************/
+/****************************************************/
+
+
+/****************************************************/
+/****************** Splash  Screen ******************/
+
+.spalsh-screen {
+    position: fixed;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+    background-color: #fff;
+    z-index: 100;
+}
+
+.spalsh-screen img.animated-image {
+    width: 80%;
+    min-width: 320px;
+    max-width: 33%;
+    height: auto;
+    align-self: center;
+    animation: spalsh 0.5s cubic-bezier(0, 0, 0, 1) 0.1s forwards;
+    transform: scale(1.3);
+}
+
+img.fixed-image {
+    width: 300px;
+    height: auto;
+    position: fixed;
+    bottom: 24px;
+    left: 32px;
+    z-index: 101;
+}
+
+@keyframes spalsh {
+    from {
+        transform: scale(1.3);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.spalsh-screen.out {
+    animation: splash-slide-right 0.05s ease-out 0.24s forwards;
+}
+
+@keyframes splash-slide-right {
+    from {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    to {
+        transform: translateX(100vw);
+        visibility: hidden;
+    }
+}
+
+.spalsh-screen.out img.animated-image {
+    animation: spalsh-out 0.25s ease-out 0.05s forwards;
+    transform: scale(1);
+}
+
+@keyframes spalsh-out {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.75);
+        opacity: 0;
+    }
+}
+
+.main-container {
+    width: 100%;
+    animation: main-slide-right 0.25s ease-out 0.3s forwards;
+    transform: translateX(-100vw);
+}
+
+@keyframes main-slide-right {
+    from {
+        transform: translateX(-100vw);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+/*************** End of Splash Screen ***************/
+/****************************************************/
+
+
+/****************************************************/
+/*************** Lazy Content  Styles ***************/
+
+table.loading {
+    table-layout: fixed;
+}
+
+.loading td,
+.loading th {
+    vertical-align: middle;
+}
+
+.loading th div,
+.loading td div {
+    background-color: lightgray;
+    border-radius: 8px;
+    width: 80%;
+    height: 20px;
+    margin: auto;
+}
+
+.loading td div.actions {
+    height: 40px;
+    width: 100px;
+    border-radius: 6px;
+}
+
+.slider {
+    background-color: rgba(255, 255, 255, 0.6);
+    height: 200%;
+    top: -50%;
+    transform: rotate(30deg);
+    width: 120px;
+    left: -200px;
+}
+
+.page-footer {
+    line-height: 48px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #f7f7f7;
+    border-top: 1px solid #d6d5d5;
+    font-family: "segoe ui light";
+}
+
+/************ End of Lazy Content Styles ************/
+/****************************************************/
+
+
+/****************************************************/
+/****************** Custom  Inputs ******************/
+
+.custom-checkbox .custom-control-input.indeterminate ~ .custom-control-label::before {
+    border-color: #007bff;
+    background-color: #007bff;
+}
+
+.custom-checkbox .custom-control-input.indeterminate ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3e%3cpath stroke='%23fff' d='M0 2h4'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .custom-control-input:disabled.indeterminate ~ .custom-control-label::before {
+    background-color: rgba(0, 123, 255, 0.5);
+}
+
+.custom-checkbox .custom-control-input.checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before {
+    background-color: rgba(0, 123, 255, 0.5);
+}
+
+.custom-checkbox .custom-control-input.checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+}
+
+.custom-control-input.checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #007bff;
+    background-color: #007bff;
+}
+
+.custom-control-input:focus:not(.checked) ~ .custom-control-label::before {
+    border-color: #80bdff;
+}
+
+/*************** End of Custom Inputs ***************/
+/****************************************************/
+
+
+/****************************************************/
+/**************** AutoComplete  Menu ****************/
+
+.autoComplete{
+    cursor: text;
+    display: flex;
+}
+
+.autoComplete input {
+    flex: 1 1 100%;
+}
+
+.autoComplete input,
+.autoComplete input:focus {
+    border: none;
+    outline: none;
+}
+
+.list-group .list-group-item:active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+/************* End of AutoComplete Menu *************/
+/****************************************************/
+
+.lonely-text {
+    font-size: 3.33vh;
+    letter-spacing: 0.4vh;
+}
+
+.loading-overlay {
+    display: flex;
+    z-index: 1500;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-backdrop {
+    width: 100%;
+    height: 100%;
+}
+
+/****************************************************/
+/****************** Dropdown  Menu ******************/
+
+.dropdown-menu {
+    box-shadow: 0 1px 4px 1px rgba(0,0,0,0.28)
+}
+
+.dropdown-toggle::after{
+    vertical-align:middle;
+}
+
+.dropdown-toggle {
+    line-height: 1.6em;
+}
+
+a.dropdown-item {
+    cursor: pointer;
+}
+
+.dropdown-menu a.dropdown-item:active {
+    color: #fff;
+}
+
+/*************** End of Dropdown Menu ***************/
+/****************************************************/
+
+
+/****************************************************/
+/******************* Media  Query *******************/
+
+@media (min-width: 576px) {
+    .modal-dialog-centered {
+        min-height: calc(100vh - 3.5rem);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main .top-row:not(.auth) {
+        display: none;
+    }
+
+    .main .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .main .top-row a, .main .top-row .btn-link {
+        margin-left: 0;
+    }
+
+    .content {
+        min-height: calc(100vh - 56px);
+    }
+}
+
+@media (min-width: 768px) {
+    app, .main-container {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .main .top-row {
+        position: sticky;
+        top: 0;
+    }
+
+    .main > div {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .navbar-toggler {
+        display: none;
+    }
+
+    .sidebar .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
+
+@media (min-height: 1080px) {
+    .lonely-text {
+        font-size: 36px;
+        letter-spacing: 4px;
+    }
+}
+
+/****************************************************/
+/**************** End of Media Query ****************/
