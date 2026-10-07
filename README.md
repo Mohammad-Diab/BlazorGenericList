@@ -28,5 +28,8 @@ Then open the address it prints. The project targets Blazor WebAssembly 3.2 (.NE
 ## Deployment
 Each push to `master` runs `.github/workflows/pages.yml`, which builds the site and deploys it with GitHub Pages' own deployment (no personal token). It can also be run by hand from the Actions tab.
 
+## History
+The first prototype (May 2020, before this repository started) is kept on the [`prototype`](https://github.com/Mohammad-Diab/BlazorGenericList/tree/prototype) branch.
+
 ## License
 [Apache 2.0](LICENSE)
