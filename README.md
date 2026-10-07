@@ -26,7 +26,7 @@ dotnet run --project BlazorApp
 Then open the address it prints. The project targets Blazor WebAssembly 3.2 (.NET Core 3.1 SDK era); the current .NET SDK still builds it.
 
 ## Deployment
-Each push to `master` runs `.github/workflows/ci.yml`, which publishes the site to the `gh-pages` branch for GitHub Pages.
+Each push to `master` runs `.github/workflows/pages.yml`, which builds the site and deploys it with GitHub Pages' own deployment (no personal token). It can also be run by hand from the Actions tab.
 
 ## License
 [Apache 2.0](LICENSE)
